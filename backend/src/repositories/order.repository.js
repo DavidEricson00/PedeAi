@@ -36,3 +36,15 @@ export async function changeOrderStatus(id, { status }) {
     );
     return rows[0];
 }
+
+export async function addOrderItem({ orderId, productId, quantity, unit_price, total_price }) {
+    const { rows } = await pool.query(
+    `
+        INSERT INTO order_items (order_id, product_id, quantity, unit_price, total_price)
+        VALUES($1, $2, $3, $4)
+        RETURNING *
+    `,
+    [orderId, productId, quantity, unit_price, total_price]
+    );
+    return rows[0];
+}
