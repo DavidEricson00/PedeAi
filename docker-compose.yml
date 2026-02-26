@@ -21,3 +21,6 @@ services:
       - postgres
     environment:
       DATABASE_URL: postgres://pedeai:pedeai123@postgres:5432/pedeai_db
+
+volumes:
+  postgres_data:
