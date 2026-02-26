@@ -48,3 +48,14 @@ export async function addOrderItem({ orderId, productId, quantity, unit_price, t
     );
     return rows[0];
 }
+
+export async function getOrderItems(orderId) {
+    const { rows } = await pool.query (
+        `
+            SELECT * FROM order_items
+            WHERE order_id = $1
+        `,
+        [orderId]
+    );
+    return rows;
+}
