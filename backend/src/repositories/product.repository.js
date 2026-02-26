@@ -46,7 +46,6 @@ export async function deleteProduct(id) {
     `,
     [id]
     );
-
     return rowCount > 0;
 }
 
