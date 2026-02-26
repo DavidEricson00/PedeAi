@@ -11,7 +11,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
+      - ./database:/docker-entrypoint-initdb.d
+      
   backend:
     build: ./backend
     container_name: pedeai-backend
