@@ -1,17 +1,8 @@
 import express from "express";
-import pkg from "pg";
-import dotenv from "dotenv"
-
-dotenv.config();
-
-const { Pool } = pkg;
+import { PORT } from "./config/env";
 
 const app = express();
 app.use(express.json());
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
 
 app.get("/", (req, res) => {
     res.json({ message: "PedeAi API rodando" })
@@ -26,7 +17,6 @@ app.get("/health", async (req, res) => {
     }
 });
 
-const PORT = 3000
 
 app.listen(PORT, () => {
     console.log("Servidor rodando na porta", PORT);
