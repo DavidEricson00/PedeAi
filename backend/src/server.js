@@ -1,8 +1,10 @@
 import express from "express";
-import { PORT } from "./config/env";
+import { PORT } from "./config/env.js";
+import router from "./routes/index.routes.js";
 
 const app = express();
 app.use(express.json());
+app.use("/", router)
 
 app.get("/", (req, res) => {
     res.json({ message: "PedeAi API rodando" })
