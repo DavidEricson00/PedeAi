@@ -20,7 +20,7 @@ export async function createCategory({name}) {
 
     if(!category) throw new Error("Não foi possível criar a categoria");
 
-    return formatCategory(category)
+    return formatCategory(category);
 }
 
 export async function getCategories() {
