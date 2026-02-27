@@ -33,8 +33,6 @@ export async function createCategory({name}) {
 export async function getCategories() {
     const categories = await getCategoriesRepo();
 
-    if (categories.length === 0) return [];
-
     return categories.map(formatCategory);
 }
 
@@ -55,7 +53,7 @@ export async function updateCategory(id, { name }) {
         if (error.code === "23505") {
             throw new AppError("Já existe uma categoria com esse nome", 409);
         }
-        throw error;
+        throw new AppError("Erro ao atualizar categoria", 500);
     }
 }
 
