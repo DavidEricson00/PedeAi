@@ -1,11 +1,11 @@
 import pool from "../config/db.js";
 
-export async function createOrder() {
+export async function createOrder(user_id) {
     const { rows } = await pool.query(`
-        INSERT INTO orders
-        DEFAULT VALUES
+        INSERT INTO orders (user_id)
+        VALUES ($1)
         RETURNING *
-    `);
+    `, [user_id]);
 
     return rows[0];
 }

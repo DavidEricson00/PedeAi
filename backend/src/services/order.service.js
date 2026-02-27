@@ -34,9 +34,12 @@ function formatItem(item) {
 }
 
 
-export async function createOrder() {
+export async function createOrder(user_id) {
+    if (!user_id)
+        throw new AppError("User id inválido", 400);
+
     try {
-        const order = await createOrderRepo();
+        const order = await createOrderRepo(user_id);
 
         return formatOrder(order);
 

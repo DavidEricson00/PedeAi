@@ -54,7 +54,7 @@ CREATE TABLE orders (
     CONSTRAINT fk_orders_users
         FOREIGN KEY (user_id)
         REFERENCES users(id)
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()

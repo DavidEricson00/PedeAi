@@ -8,7 +8,8 @@ import {
 
 export async function createOrderController(req, res, next) {
     try {
-        const order = await createOrder()
+        const user_id = req.body;
+        const order = await createOrder(user_id);
 
         return res.status(201).json(order);
     } catch(error) {
@@ -49,7 +50,7 @@ export async function updateOrderController(req, res, next) {
 
 export async function addOrderItemController(req, res, next) {
     try {
-        const { orderId } = req.params
+        const { orderId } = req.params;
         const { productId, quantity, unit_price } = req.body;
 
         const order = await addOrderItem({
