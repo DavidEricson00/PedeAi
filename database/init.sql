@@ -95,20 +95,30 @@ ON orders(created_at);
 
 CREATE OR REPLACE FUNCTION update_order_total()
 RETURNS TRIGGER AS $$
+DECLARE
+    target_order_id INT;
 BEGIN
-    UPDATE orders
-    SET total_price = (
-        SELECT COALESCE(SUM(total_price), 0)
-        FROM order_items
-        WHERE order_id = NEW.order_id
-    ),
-    updated_at = NOW()
-    WHERE id = NEW.order_id;
+    IF TG_OP = 'DELETE' THEN
+        target_order_id := OLD.order_id;
+    ELSE
+        target_order_id := NEW.order_id;
+    END IF;
 
-    RETURN NEW;
+    UPDATE orders
+    SET
+        total_price = (
+            SELECT COALESCE(SUM(total_price), 0)
+            FROM order_items
+            WHERE order_id = target_order_id
+        ),
+        updated_at = NOW()
+    WHERE id = target_order_id;
+
+    RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
 
+DROP TRIGGER IF EXISTS trigger_update_order_total ON order_items;
 
 CREATE TRIGGER trigger_update_order_total
 AFTER INSERT OR UPDATE OR DELETE ON order_items
