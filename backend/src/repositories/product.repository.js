@@ -12,12 +12,16 @@ export async function createProduct({ name, description=null, price, category_id
     return rows[0];
 }
 
-export async function getProducts() {
-    const { rows } = await pool.query(
-    `
-        SELECT * FROM products
-    `
-    );
+export async function getProducts(active) {
+    let query = `SELECT * FROM products`;
+    const values = [];
+
+    if (typeof active === "boolean") {
+        query += ` WHERE active = $1`;
+        values.push(active);
+    }
+
+    const { rows } = await pool.query(query, values);
     return rows;
 }
 
@@ -49,13 +53,18 @@ export async function deleteProduct(id) {
     return rowCount > 0;
 }
 
-export async function getProductsByCategory(categoryId) {
-    const { rows } = await pool.query(
+export async function getProductsByCategory(categoryId, active) {
+    let query = `
+    SELECT * FROM products
+    WHERE category_id = $1
     `
-        SELECT * FROM products
-        WHERE category_id = $1
-    `,
-    [categoryId]
-    );
+    const values = [categoryId]
+
+    if (typeof active === "boolean") {
+        query += `AND active = $2`
+        values.push(active);
+    }
+
+    const {rows} = await pool.query(query, values);
     return rows;
 }
