@@ -6,7 +6,7 @@ const options = {
     info: {
       title: "Pede Aí API",
       version: "1.0.0",
-      description: "Documentação da Pede Aí",
+      description: "Documentação da Pede Aí, uma API focada na automatização de um sistema de pedidos",
     },
     servers: [
       {
@@ -14,7 +14,10 @@ const options = {
       },
     ],
   },
-  apis: ["./src/routes/*.js"], 
+  apis: [
+    "./src/routes/*.js",
+    "./src/docs/*.js"
+    ], 
 };
 
 const swaggerSpec = swaggerJsdoc(options);
