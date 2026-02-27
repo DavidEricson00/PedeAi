@@ -2,7 +2,7 @@ import {
     createUser, 
     getUserById, 
     getUserByTelegramChatId
-} from "../services/user.service";
+} from "../services/user.service.js";
 
 export async function createUserController(req, res, next) {
     try {
