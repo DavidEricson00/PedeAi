@@ -14,6 +14,12 @@ CREATE TYPE payment_type AS ENUM (
     'debito'
 );
 
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    telegram_chat_id BIGINT NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
 CREATE TABLE categories (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL UNIQUE,
@@ -36,20 +42,19 @@ CREATE TABLE products (
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
-
     order_number SERIAL UNIQUE,
-
     address VARCHAR(255),
-
     status order_status NOT NULL DEFAULT 'carrinho',
-
     total_price NUMERIC(10,2) NOT NULL DEFAULT 0,
-
     payment payment_type,
-
     change_for NUMERIC(10,2),
-
     observation TEXT,
+    user_id INT NOT NULL,
+
+    CONSTRAINT fk_orders_users
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE RESTRICT
 
     created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP NOT NULL DEFAULT NOW()
