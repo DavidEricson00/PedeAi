@@ -19,30 +19,19 @@ export async function getOrder(id) {
     return rows[0];
 }
 
-export async function updateOrder(id,{ address = null, payment = null, change_for = null, observation = null }) {
+export async function updateOrder(id,{ address = null, payment = null, change_for = null, observation = null, status=null }) {
     const { rows } = await pool.query(`
         UPDATE orders
         SET
             address = COALESCE($2, address),
             payment = COALESCE($3, payment),
             change_for = COALESCE($4, change_for),
-            observation = COALESCE($5, observation)
+            observation = COALESCE($5, observation),
+            status = COALESCE($6, status)
         WHERE id = $1
         RETURNING *
     `,
-    [id, address, payment, change_for, observation]);
-
-    return rows[0];
-}
-
-export async function changeOrderStatus(id, status) {
-    const { rows } = await pool.query(`
-        UPDATE orders
-        SET status = $2
-        WHERE id = $1
-        RETURNING *
-    `,
-    [id, status]);
+    [id, address, payment, change_for, observation, status]);
 
     return rows[0];
 }
