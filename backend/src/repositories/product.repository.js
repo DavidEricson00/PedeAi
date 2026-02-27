@@ -61,7 +61,7 @@ export async function getProductsByCategory(categoryId, active) {
     const values = [categoryId]
 
     if (typeof active === "boolean") {
-        query += `AND active = $2`
+        query += ` AND active = $2`
         values.push(active);
     }
 
