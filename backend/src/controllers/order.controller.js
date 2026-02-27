@@ -4,7 +4,7 @@ import {
     getOrder, 
     addOrderItem,
     getOrderItems
-} from "../services/order.service";
+} from "../services/order.service.js";
 
 export async function createOrderController(req, res, next) {
     try {

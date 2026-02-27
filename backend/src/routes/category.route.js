@@ -3,10 +3,10 @@ import { createCategoryController,
     deleteCategoryController, 
     getCategoriesController, 
     updateCategoryController 
-} from "../controllers/category.controller";
+} from "../controllers/category.controller.js";
 import { 
     getProductsByCategoryController 
-} from "../controllers/product.controller";
+} from "../controllers/product.controller.js";
 
 const router = Router();
 

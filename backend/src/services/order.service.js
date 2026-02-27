@@ -4,7 +4,7 @@ import {
     getOrderItems as getOrderItemsRepo,
     getOrder as getOrderRepo,
     updateOrder as updateOrderRepo,
-} from "../repositories/order.repository"
+} from "../repositories/order.repository.js"
 
 function formatOrder(order) {
     return {

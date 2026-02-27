@@ -4,7 +4,7 @@ import {
     getProducts, 
     getProductsByCategory, 
     updateProduct 
-} from "../services/product.service"
+} from "../services/product.service.js"
 
 function parseBoolean(value) {
     if (value === undefined) return undefined;

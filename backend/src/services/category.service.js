@@ -3,8 +3,8 @@ import {
     deleteCategory as deleteCategoryRepo,
     getCategories as getCategoriesRepo,
     updateCategory as updateCategoryRepo,
-} from "../repositories/category.repository";
-import { AppError } from "../utils/AppError";
+} from "../repositories/category.repository.js";
+import { AppError } from "../utils/AppError.js";
 
 function formatCategory(category) {
     return {

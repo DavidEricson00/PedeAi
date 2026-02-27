@@ -4,8 +4,8 @@ import {
     getProductsByCategory as getProductsByCategoryRepo,
     getProducts as getProductsRepo,
     updateProduct as updateProductRepo,
-} from "../repositories/product.repository";
-import { AppError } from "../utils/AppError";
+} from "../repositories/product.repository.js";
+import { AppError } from "../utils/AppError.js";
 
 function formatProduct(product) {
     return {
