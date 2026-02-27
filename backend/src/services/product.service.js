@@ -46,10 +46,12 @@ export async function createProduct({ name, description, price, category_id }) {
     }
 }
 
-export async function getProducts() {
-    const products = await getProductsRepo();
-
-    if (products.length === 0) return [];
+export async function getProducts(active) {
+    if (active !== undefined && typeof active !== "boolean") {
+        throw new AppError("Parâmetro 'active' deve ser boolean", 400);
+    }
+    
+    const products = await getProductsRepo(active);
 
     return products.map(formatProduct);
 }
@@ -101,13 +103,15 @@ export async function deleteProduct(id) {
     }
 }
 
-export async function getProductsByCategory(categoryId) {
+export async function getProductsByCategory(categoryId, active) {
     if (!categoryId)
         throw new AppError("Id da categoria inválido", 400);
-
-    const products = await getProductsByCategoryRepo(categoryId);
-
-    if (products.length === 0) return [];
+    
+    if (active !== undefined && typeof active !== "boolean") {
+        throw new AppError("Parâmetro 'active' deve ser boolean", 400);
+    }
+    
+    const products = await getProductsByCategoryRepo(categoryId, active);
 
     return products.map(formatProduct);
 }
