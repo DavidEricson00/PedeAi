@@ -10,7 +10,7 @@ function parseBoolean(value) {
     if (value === undefined) return undefined;
     if (value === "true") return true;
     if (value === "false") return false;
-    return value
+    return value;
 }
 
 export async function createProductController(req, res, next) {
@@ -55,7 +55,7 @@ export async function updateProductController(req, res, next) {
 
         return res.status(200).json(product);
     } catch(error) {
-        next(error)
+        next(error);
     }
 }
 
@@ -67,7 +67,7 @@ export async function deleteProductsController(req, res, next) {
 
         return res.sendStatus(204);
     } catch(error) {
-        next(error)
+        next(error);
     }
 }
 
@@ -80,6 +80,6 @@ export async function getProductsByCategoryController(req, res, next) {
 
         return res.status(200).json(products);
     } catch(error) {
-        next(error)
+        next(error);
     }
 }
