@@ -1,4 +1,5 @@
 CREATE TYPE order_status AS ENUM (
+    'carrinho',
     'pedido_recebido',
     'em_preparo',
     'a_caminho',
@@ -38,13 +39,13 @@ CREATE TABLE orders (
 
     order_number SERIAL UNIQUE,
 
-    address VARCHAR(255) NOT NULL,
+    address VARCHAR(255),
 
-    status order_status NOT NULL DEFAULT 'pedido_recebido',
+    status order_status NOT NULL DEFAULT 'carrinho',
 
     total_price NUMERIC(10,2) NOT NULL DEFAULT 0,
 
-    payment payment_type NOT NULL,
+    payment payment_type,
 
     change_for NUMERIC(10,2),
 
@@ -91,3 +92,25 @@ ON orders(status);
 
 CREATE INDEX idx_orders_created_at
 ON orders(created_at);
+
+CREATE OR REPLACE FUNCTION update_order_total()
+RETURNS TRIGGER AS $$
+BEGIN
+    UPDATE orders
+    SET total_price = (
+        SELECT COALESCE(SUM(total_price), 0)
+        FROM order_items
+        WHERE order_id = NEW.order_id
+    ),
+    updated_at = NOW()
+    WHERE id = NEW.order_id;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trigger_update_order_total
+AFTER INSERT OR UPDATE OR DELETE ON order_items
+FOR EACH ROW
+EXECUTE FUNCTION update_order_total();
