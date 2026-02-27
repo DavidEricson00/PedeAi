@@ -4,6 +4,7 @@ import {
     getCategories as getCategoriesRepo,
     updateCategory as updateCategoryRepo,
 } from "../repositories/category.repository";
+import { AppError } from "../utils/AppError";
 
 function formatCategory(category) {
     return {
@@ -14,13 +15,19 @@ function formatCategory(category) {
 }
 
 export async function createCategory({name}) {
-    if (!name) throw new Error("Dados inválidos");
+    if (!name)
+        throw new AppError("Nome é obrigatório", 400);
 
-    const category = await createCategoryRepo({ name });
+    try {
+        const category = await createCategoryRepo({ name });
 
-    if(!category) throw new Error("Não foi possível criar a categoria");
-
-    return formatCategory(category);
+        return formatCategory(category);
+    } catch (error) {
+        if (error.code === "23505") {
+            throw new AppError("Categoria já existe", 409);
+        }
+        throw new AppError("Erro interno ao criar categoria", 500);
+    }
 }
 
 export async function getCategories() {
@@ -31,20 +38,36 @@ export async function getCategories() {
     return categories.map(formatCategory);
 }
 
-export async function updateCategory(id, {name}) {
-    if (!id) throw new Error("Dados inválidos");
+export async function updateCategory(id, { name }) {
+    if (!id)
+        throw new AppError("Id inválido", 400);
+    if (!name)
+        throw new AppError("Nome é obrigatório", 400);
 
-    const category = await updateCategoryRepo(id,{name});
-
-    if(!category) throw new Error("Não foi possível atualizar a categoria");
-
-    return formatCategory(category)
+    try {
+        const category = await updateCategoryRepo(id, { name });
+        
+        if (!category)
+            throw new AppError("Categoria não encontrada", 404);
+        
+        return formatCategory(category);
+    } catch (error) {
+        if (error.code === "23505") {
+            throw new AppError("Já existe uma categoria com esse nome", 409);
+        }
+        throw error;
+    }
 }
 
 export async function deleteCategory(id) {
-    if (!id) throw new Error("Dados inválidos");
+    if (!id)
+        throw new AppError("Id inválido", 400);
+    try {
+        const deleted = await deleteCategoryRepo(id);
 
-    const deleted = await deleteCategoryRepo(id);
-
-    if (!deleted) throw new Error("Categoria não encontrada");
+        if (!deleted)
+            throw new AppError("Categoria não encontrada", 404);
+    } catch (error) {
+        throw new AppError("Erro ao deletar categoria", 500);
+    }
 }

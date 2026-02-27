@@ -35,64 +35,101 @@ function formatItem(item) {
 
 
 export async function createOrder() {
-    const order = await createOrderRepo();
+    try {
+        const order = await createOrderRepo();
 
-    if(!order) throw new Error("Não foi possível criar a ordem");
+        return formatOrder(order);
 
-    return formatOrder(order);
+    } catch (error) {
+        throw new AppError("Erro ao criar pedido", 500);
+    }
 }
 
 export async function getOrder(id) {
-    if (!id) throw new Error("Dados inválidos");
+    if (!id)
+        throw new AppError("Id inválido", 400);
 
     const order = await getOrderRepo(id);
 
-    if(!order) throw new Error("Não foi possível encontrar a ordem");
+    if (!order)
+        throw new AppError("Pedido não encontrado", 404);
 
     return formatOrder(order);
 }
 
-export async function updateOrder(id, {address = null, payment = null, change_for = null, observation = null, status=null}) {
-    if (!id) throw new Error("Dados inválidos");
+export async function updateOrder(
+    id,
+    { address = null, payment = null, change_for = null, observation = null, status = null }
+) {
+    if (!id)
+        throw new AppError("Id inválido", 400);
 
-    const order = await updateOrderRepo(id, {
-        address,
-        payment,
-        change_for,
-        observation,
-        status
-    });
+    try {
+        const order = await updateOrderRepo(id, {
+            address,
+            payment,
+            change_for,
+            observation,
+            status
+        });
 
-    
-    if(!order) throw new Error("Não foi possível atualizar a ordem");
+        if (!order)
+            throw new AppError("Pedido não encontrado", 404);
 
-    return formatOrder(order);
+        return formatOrder(order);
+
+    } catch (error) {
+
+        if (error.code === "22P02") {
+            throw new AppError("Valor inválido para status ou pagamento", 400);
+        }
+
+        throw new AppError("Erro ao atualizar pedido", 500);
+    }
 }
 
-export async function addOrderItem({orderId, productId, quantity, unit_price}) {
-    if (!orderId || !productId || !quantity || !unit_price ) throw new Error("Dados inválidos");
+export async function addOrderItem({ orderId, productId, quantity, unit_price }) {
+    if (!orderId || !productId)
+        throw new AppError("Pedido e produto são obrigatórios", 400);
 
-    const total_price = unit_price * quantity
+    if (!quantity || quantity <= 0)
+        throw new AppError("Quantidade inválida", 400);
 
-    const item = await addOrderItemRepo({
-        orderId,
-        productId,
-        quantity,
-        unit_price,
-        total_price
-    })
+    if (!unit_price || unit_price < 0)
+        throw new AppError("Preço unitário inválido", 400);
 
-    if(!item) throw new Error("Não foi possível criar o item");
+    const total_price = unit_price * quantity;
 
-    return formatItem(item);
+    try {
+        const item = await addOrderItemRepo({
+            orderId,
+            productId,
+            quantity,
+            unit_price,
+            total_price
+        });
+
+        return formatItem(item);
+
+    } catch (error) {
+
+        if (error.code === "23503") {
+            throw new AppError("Pedido ou produto não encontrado", 404);
+        }
+
+        if (error.code === "23514") {
+            throw new AppError("Quantidade inválida", 400);
+        }
+
+        throw new AppError("Erro ao adicionar item ao pedido", 500);
+    }
 }
 
 export async function getOrderItems(orderId) {
-    if (!orderId) throw new Error("Dados inválidos");
+    if (!orderId)
+        throw new AppError("Id do pedido inválido", 400);
 
     const items = await getOrderItemsRepo(orderId);
-
-    if (items.length === 0) return [];
 
     return items.map(formatItem);
 }

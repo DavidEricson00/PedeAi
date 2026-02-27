@@ -5,6 +5,7 @@ import {
     getProducts as getProductsRepo,
     updateProduct as updateProductRepo,
 } from "../repositories/product.repository";
+import { AppError } from "../utils/AppError";
 
 function formatProduct(product) {
     return {
@@ -18,18 +19,31 @@ function formatProduct(product) {
 }
 
 export async function createProduct({ name, description, price, category_id }) {
-    if (!name || typeof price !== "number" || price < 0 || !category_id ) throw new Error("Dados inválidos");
+    if (!name)
+        throw new AppError("Nome é obrigatório", 400);
 
-    const product = await createProductRepo({
-        name,
-        description,
-        price,
-        category_id
-    })
+    if (typeof price !== "number" || price < 0)
+        throw new AppError("Preço inválido", 400);
 
-    if(!product) throw new Error("Não foi possível criar o produto");
+    if (!category_id)
+        throw new AppError("Categoria é obrigatória", 400);
 
-    return formatProduct(product);
+    try {
+        const product = await createProductRepo({
+            name,
+            description,
+            price,
+            category_id
+        });
+
+        return formatProduct(product);
+    } catch (error) {
+        if (error.code === "23503") {
+            throw new AppError("Categoria não encontrada", 404);
+        }
+
+        throw new AppError("Erro interno ao criar produto", 500);
+    }
 }
 
 export async function getProducts() {
@@ -40,31 +54,56 @@ export async function getProducts() {
     return products.map(formatProduct);
 }
 
-export async function updateProduct(id, {name, description, price, category_id}) {
-    if (!id || price < 0) throw new Error("Dados inválidos");
+export async function updateProduct(id, { name, description, price, category_id }) {
+    if (!id)
+        throw new AppError("Id inválido", 400);
 
-    const product = await updateProductRepo(id,{
-        name,
-        description,
-        price,
-        category_id
-    });
+    if (price !== undefined && price < 0)
+        throw new AppError("Preço inválido", 400);
+    
+    try {
+        const product = await updateProductRepo(id, {
+            name,
+            description,
+            price,
+            category_id
+        });
 
-    if(!product) throw new Error("Não foi possível atualizar o produto");
+        if (!product)
+            throw new AppError("Produto não encontrado", 404);
 
-    return formatProduct(product)
+        return formatProduct(product);
+    } catch (error) {
+        if (error.code === "23503") {
+            throw new AppError("Categoria não encontrada", 404);
+        }
+        throw new AppError("Erro ao atualizar produto", 500);
+    }
 }
 
 export async function deleteProduct(id) {
-    if (!id) throw new Error("Dados inválidos");
+    if (!id)
+        throw new AppError("Id inválido", 400);
 
-    const deleted = await deleteProductRepo(id);
+    try {
+        const deleted = await deleteProductRepo(id);
 
-    if (!deleted) throw new Error("Produto não encontrado");
+        if (!deleted)
+            throw new AppError("Produto não encontrado", 404);
+
+    } catch (error) {
+
+        if (error.code === "23503") {
+            throw new AppError("Produto está vinculado a um pedido", 409);
+        }
+
+        throw new AppError("Erro ao deletar produto", 500);
+    }
 }
 
 export async function getProductsByCategory(categoryId) {
-    if(!categoryId) throw new Error("Dados inválidos")
+    if (!categoryId)
+        throw new AppError("Id da categoria inválido", 400);
 
     const products = await getProductsByCategoryRepo(categoryId);
 
