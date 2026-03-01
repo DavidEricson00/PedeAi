@@ -8,7 +8,7 @@ import {
 
 export async function createOrderController(req, res, next) {
     try {
-        const user_id = req.body;
+        const { user_id } = req.body;
         const order = await createOrder(user_id);
 
         return res.status(201).json(order);
