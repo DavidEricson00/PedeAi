@@ -5,6 +5,7 @@ import {
     getOrder as getOrderRepo,
     updateOrder as updateOrderRepo,
 } from "../repositories/order.repository.js"
+import { AppError } from "../utils/AppError.js";
 
 function formatOrder(order) {
     return {
