@@ -51,13 +51,12 @@ export async function updateOrderController(req, res, next) {
 export async function addOrderItemController(req, res, next) {
     try {
         const { orderId } = req.params;
-        const { productId, quantity, unit_price } = req.body;
+        const { productId, quantity } = req.body;
 
         const order = await addOrderItem({
             orderId, 
             productId, 
             quantity, 
-            unit_price
         });
 
         res.status(200).json(order);

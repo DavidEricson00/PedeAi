@@ -150,7 +150,6 @@ router.patch("/:id", updateOrderController);
  *             required:
  *               - productId
  *               - quantity
- *               - unit_price
  *             properties:
  *               productId:
  *                 type: integer
@@ -158,9 +157,6 @@ router.patch("/:id", updateOrderController);
  *               quantity:
  *                 type: integer
  *                 example: 2
- *               unit_price:
- *                 type: number
- *                 example: 25.50
  *     responses:
  *       200:
  *         description: Item adicionado ao pedido

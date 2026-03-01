@@ -5,6 +5,9 @@ import {
     getOrder as getOrderRepo,
     updateOrder as updateOrderRepo,
 } from "../repositories/order.repository.js"
+import { 
+    getProduct as getProductRepo
+} from "../repositories/product.repository.js";
 import { AppError } from "../utils/AppError.js";
 
 function formatOrder(order) {
@@ -92,24 +95,30 @@ export async function updateOrder(
     }
 }
 
-export async function addOrderItem({ orderId, productId, quantity, unit_price }) {
+export async function addOrderItem({ orderId, productId, quantity }) {
+
     if (!orderId || !productId)
         throw new AppError("Pedido e produto são obrigatórios", 400);
 
     if (!quantity || quantity <= 0)
         throw new AppError("Quantidade inválida", 400);
 
-    if (!unit_price || unit_price < 0)
-        throw new AppError("Preço unitário inválido", 400);
+    const product = await getProductRepo(productId);
 
-    const total_price = unit_price * quantity;
+    if (!product) {
+        throw new AppError("Produto não encontrado", 404);
+    }
+
+    const unitPrice = Number(product.price);
+    const total_price = unitPrice * quantity;
 
     try {
+
         const item = await addOrderItemRepo({
             orderId,
             productId,
             quantity,
-            unit_price,
+            unit_price: unitPrice,
             total_price
         });
 
@@ -118,7 +127,7 @@ export async function addOrderItem({ orderId, productId, quantity, unit_price })
     } catch (error) {
 
         if (error.code === "23503") {
-            throw new AppError("Pedido ou produto não encontrado", 404);
+            throw new AppError("Pedido não encontrado", 404);
         }
 
         if (error.code === "23514") {

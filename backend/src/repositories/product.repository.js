@@ -67,3 +67,12 @@ export async function getProductsByCategory(categoryId, active) {
     const {rows} = await pool.query(query, values);
     return rows;
 }
+
+export async function getProduct(id) {
+    const { rows } = await pool.query(`
+        SELECT * FROM products
+        WHERE id = $1
+    `, [id]);
+
+    return rows[0];
+}
