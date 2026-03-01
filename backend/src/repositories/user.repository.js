@@ -22,7 +22,7 @@ export async function getUserById(id) {
     `,
     [id]
     );
-    return rows;
+    return rows[0];
 }
 
 export async function getUserByTelegramChatId(telegram_chat_id) {
