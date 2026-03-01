@@ -1,13 +1,13 @@
 import pool from "../config/db.js";
 
-export async function createProduct({ name, description=null, price, category_id }) {
+export async function createProduct({ name, price, category_id }) {
     const { rows } = await pool.query(
     `
-        INSERT INTO products (name, description, price, category_id)
-        VALUES($1, $2, $3, $4)
+        INSERT INTO products (name, price, category_id)
+        VALUES($1, $2, $3)
         RETURNING *
     `,
-    [name, description, price, category_id]
+    [name, price, category_id]
     );
     return rows[0];
 }
@@ -25,19 +25,18 @@ export async function getProducts(active) {
     return rows;
 }
 
-export async function updateProduct(id, { name=null, description=null, price=null, category_id=null }) {
+export async function updateProduct(id, { name=null, price=null, category_id=null }) {
     const { rows } = await pool.query(
     `
         UPDATE products
         SET
             name = COALESCE($2, name),
-            description = COALESCE($3, description),
-            price = COALESCE($4, price),
-            category_id = COALESCE($5, category_id)
+            price = COALESCE($3, price),
+            category_id = COALESCE($4, category_id)
         WHERE id = $1
         RETURNING *
     `,
-    [id, name, description, price, category_id]
+    [id, name, price, category_id]
     );
     return rows[0];
 }

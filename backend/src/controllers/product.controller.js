@@ -15,10 +15,9 @@ function parseBoolean(value) {
 
 export async function createProductController(req, res, next) {
     try {
-        const { name, description, price, category_id } = req.body;
+        const { name, price, category_id } = req.body;
         const product = await createProduct({
             name, 
-            description, 
             price, 
             category_id
         });
@@ -44,11 +43,10 @@ export async function getProductsController(req, res, next) {
 export async function updateProductController(req, res, next) {
     try {
         const { id } = req.params;
-        const { name, description, price, category_id } = req.body;
+        const { name, price, category_id } = req.body;
 
         const product = await updateProduct(id, {
             name, 
-            description, 
             price, 
             category_id
         });

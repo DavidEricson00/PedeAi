@@ -35,9 +35,6 @@ const router = Router();
  *               name:
  *                 type: string
  *                 example: X-Burger
- *               description:
- *                 type: string
- *                 example: Hambúrguer artesanal com queijo
  *               price:
  *                 type: number
  *                 example: 29.90
@@ -110,9 +107,6 @@ router.get("/", getProductsController);
  *               name:
  *                 type: string
  *                 example: X-Burger Especial
- *               description:
- *                 type: string
- *                 example: Hambúrguer artesanal com bacon
  *               price:
  *                 type: number
  *                 example: 34.90

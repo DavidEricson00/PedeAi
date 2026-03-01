@@ -18,7 +18,7 @@ function formatProduct(product) {
     }   
 }
 
-export async function createProduct({ name, description, price, category_id }) {
+export async function createProduct({ name, price, category_id }) {
     if (!name)
         throw new AppError("Nome é obrigatório", 400);
 
@@ -31,7 +31,6 @@ export async function createProduct({ name, description, price, category_id }) {
     try {
         const product = await createProductRepo({
             name,
-            description,
             price,
             category_id
         });
@@ -56,7 +55,7 @@ export async function getProducts(active) {
     return products.map(formatProduct);
 }
 
-export async function updateProduct(id, { name, description, price, category_id }) {
+export async function updateProduct(id, { name, price, category_id }) {
     if (!id)
         throw new AppError("Id inválido", 400);
 
@@ -66,7 +65,6 @@ export async function updateProduct(id, { name, description, price, category_id 
     try {
         const product = await updateProductRepo(id, {
             name,
-            description,
             price,
             category_id
         });
