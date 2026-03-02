@@ -1,0 +1,301 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        176,
+        -80
+      ],
+      "id": "9bb786d8-80a0-41d4-93bc-24a75732a3b4",
+      "name": "Wait First Contact",
+      "webhookId": "ca4a92f7-628a-45e4-8a37-3f18cfc92de5",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Wait First Contact').item.json.message.chat.id }}",
+        "text": "Você escolheu Fazer pedido",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        -192
+      ],
+      "id": "44e26c41-82ee-40cb-b59c-b4abb5432f6b",
+      "name": "Pedido",
+      "webhookId": "542a160f-27d9-46dc-9ce6-23c98ba04c00",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Wait First Contact').item.json.message.chat.id }}",
+        "text": "Você escolheu Acompanhar pedido",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        16
+      ],
+      "id": "38063837-059d-4c3e-a0db-a0f0c8d35461",
+      "name": "Acompanhar",
+      "webhookId": "b274e2aa-e925-40d4-b344-49e6723cabbf",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Wait First Contact').item.json.message.chat.id }}",
+        "text": "Você escolheu Falar com atendente",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        224
+      ],
+      "id": "f28ed9af-762a-4e1a-9306-d959176fcaa3",
+      "name": "Atendente",
+      "webhookId": "df6fc0ef-f459-4b10-8422-2df5a9d8f724",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.message.chat.id }}",
+        "text": "=Olá, bem-vindo ao Ponto do Brotinho 🍞\n\nSelecione:\n1 - Fazer pedido\n2 - Acompanhar pedido\n3 - Falar com atendente",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        912,
+        416
+      ],
+      "id": "f29ba737-3171-4d90-8b3a-fcad7bd0a9d9",
+      "name": "Menu",
+      "webhookId": "a2e1d37d-3878-4998-a46c-26debc94a551",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "a5897a8c-b554-46d3-a303-85bc8a376d75"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fazer Pedido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9845384-0a02-41be-89b6-6c2430672c31",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Acompanhar Pedido"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "4a2a67cb-20eb-4fde-92ce-05b9083fe155",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Falar com Atendente"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9404ce5c-647f-40ac-8599-83267a175892",
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Menu"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": 3
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        512,
+        -112
+      ],
+      "id": "593ffd4f-2216-425d-9ac6-cd377bccb67d",
+      "name": "Option Manager"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Wait First Contact": {
+      "main": [
+        [
+          {
+            "node": "Option Manager",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Option Manager": {
+      "main": [
+        [
+          {
+            "node": "Pedido",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Acompanhar",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Atendente",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9429e6c3-3ead-49a4-8030-da4f6b0e7441",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
+  },
+  "id": "ciEqBBemoolgt2Mg",
+  "tags": []
+}
