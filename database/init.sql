@@ -86,6 +86,12 @@ CREATE TABLE order_items (
         ON DELETE RESTRICT
 );
 
+CREATE TABLE user_sessions (
+  chat_id TEXT PRIMARY KEY,
+  state TEXT NOT NULL,
+  data JSONB DEFAULT '{}'::jsonb
+);
+
 CREATE INDEX idx_products_category
 ON products(category_id);
 
