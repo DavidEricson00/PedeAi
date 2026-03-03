@@ -58,3 +58,15 @@ export async function getOrderItems(orderId) {
 
     return rows;
 }
+
+export async function checkOrderCart(userId) {
+    const { rows } = await pool.query(`
+        SELECT *
+        FROM orders
+        WHERE user_id = $1
+        AND status = 'carrinho'
+        LIMIT 1
+    `, [userId]);
+
+    return rows[0];
+}

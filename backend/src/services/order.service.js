@@ -1,5 +1,6 @@
 import { 
     addOrderItem as addOrderItemRepo,
+    checkOrderCart as checkOrderCartRepo,
     createOrder as createOrderRepo,
     getOrderItems as getOrderItemsRepo,
     getOrder as getOrderRepo,
@@ -43,7 +44,11 @@ export async function createOrder(user_id) {
         throw new AppError("User id inválido", 400);
 
     try {
-        const order = await createOrderRepo(user_id);
+        let order = await checkOrderCartRepo(user_id);
+
+        if (!order) {
+            order = await createOrderRepo(user_id);
+        }
 
         return formatOrder(order);
 
