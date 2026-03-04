@@ -8,8 +8,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1552,
-        496
+        1056,
+        -56
       ],
       "id": "4ccf96c6-cd77-4cca-8d6f-55505b3e37fa",
       "name": "Render Products Menu"
@@ -22,8 +22,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        2448,
-        48
+        2176,
+        -440
       ],
       "id": "336aeefa-e1b3-4127-8d6e-e5ebb20e34ea",
       "name": "Get Categories"
@@ -40,8 +40,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1552,
-        -448
+        1056,
+        -976
       ],
       "id": "e2c7d83c-f42c-4c0e-a51d-beb830728ab2",
       "name": "Erro",
@@ -65,8 +65,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1776,
-        -640
+        1280,
+        -1168
       ],
       "id": "8037b9db-4853-4dce-8a73-98656638398d",
       "name": "falar_atendente",
@@ -90,8 +90,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1776,
-        -832
+        1280,
+        -1360
       ],
       "id": "5b71a6a6-6b58-428a-85d1-77e76b8554e6",
       "name": "acompanhar_pedido",
@@ -190,8 +190,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1328,
-        -624
+        832,
+        -1184
       ],
       "id": "cf3f016c-2fe6-4290-ad0a-890a5be4f0fb",
       "name": "Main Menu Switch"
@@ -208,8 +208,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2000,
-        -256
+        1504,
+        -696
       ],
       "id": "8864d765-40ca-4467-a66a-eef677507c45",
       "name": "main_menu",
@@ -377,8 +377,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        656,
-        -192
+        160,
+        -664
       ],
       "id": "71439b89-8e9a-409b-85d1-c2d42a0efe52",
       "name": "Switch"
@@ -394,8 +394,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        208,
-        -128
+        -288,
+        -600
       ],
       "id": "5af15a3e-2dc6-4017-9b9d-76d474f087d8",
       "name": "Search Session",
@@ -413,8 +413,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        432,
-        -128
+        -64,
+        -600
       ],
       "id": "36fc62b6-05e0-45ee-bba6-d9b053b8d8f2",
       "name": "Compose Context"
@@ -426,8 +426,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -16,
-        -128
+        -512,
+        -600
       ],
       "id": "cfc8f7f5-0851-4b97-9212-f4d57e474c10",
       "name": "Extract Input"
@@ -442,8 +442,8 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -240,
-        -128
+        -736,
+        -600
       ],
       "id": "ce5aadf9-d7d5-4523-bfb4-b3c72ff52972",
       "name": "Telegram Trigger",
@@ -462,8 +462,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2672,
-        48
+        2400,
+        -440
       ],
       "id": "75768172-35e9-4bf3-8f31-2452e7008c0e",
       "name": "Render Order Menu"
@@ -480,8 +480,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        3120,
-        48
+        2848,
+        -440
       ],
       "id": "5fe7aad2-847e-4ece-a179-d606e4c8c439",
       "name": "Order Menu",
@@ -496,7 +496,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_order_menu_option',\n  data = jsonb_build_object(\n    'optionsMap', $2::jsonb\n  )\nWHERE chat_id = $1;",
+        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_order_menu_option',\n  data = jsonb_set(\n    COALESCE(data, '{}'::jsonb),\n    '{optionsMap}',\n    $2::jsonb,\n    true\n  )\nWHERE chat_id = $1;",
         "options": {
           "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}, {{ $json.optionsMap }}"
         }
@@ -504,8 +504,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2896,
-        48
+        2624,
+        -440
       ],
       "id": "c64c139a-1d6b-4f98-93b6-99746d185def",
       "name": "Save Options Map",
@@ -523,8 +523,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        880,
-        400
+        384,
+        -248
       ],
       "id": "831a646f-b8e6-4308-9549-40013dc66438",
       "name": "Resolve Order Menu Option"
@@ -638,8 +638,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1104,
-        368
+        608,
+        -280
       ],
       "id": "1733060a-48c9-40f1-b430-d3334efca6e1",
       "name": "Order Menu Switch"
@@ -656,8 +656,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1552,
-        288
+        1056,
+        -248
       ],
       "id": "159aa956-b8c5-4854-bafb-0002393c772b",
       "name": "menu",
@@ -677,8 +677,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1328,
-        496
+        832,
+        -56
       ],
       "id": "41f13c6a-b0a8-452e-8968-38ec906c243d",
       "name": "Get Products by Category"
@@ -694,8 +694,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1328,
-        288
+        832,
+        -248
       ],
       "id": "7530c4e2-b7a6-459a-83cf-5f7c39684e1b",
       "name": "Erase data",
@@ -718,8 +718,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2000,
-        496
+        1504,
+        40
       ],
       "id": "1412bc91-775f-4264-8128-f92f59c4db34",
       "name": "Products Menu",
@@ -734,7 +734,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_product_menu_option',\n  data = jsonb_build_object(\n    'optionsMap', $2::jsonb\n  )\nWHERE chat_id = $1;",
+        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_product_menu_option',\n  data = jsonb_set(\n    COALESCE(data, '{}'::jsonb),\n    '{optionsMap}',\n    $2::jsonb,\n    true\n  )\nWHERE chat_id = $1;",
         "options": {
           "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}, {{ $json.optionsMap }}"
         }
@@ -742,8 +742,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1776,
-        496
+        1280,
+        40
       ],
       "id": "e44d6e5b-e46a-4670-82ff-b3b613d1245d",
       "name": "Save Products Map",
@@ -760,14 +760,14 @@
         "operation": "executeQuery",
         "query": "UPDATE user_sessions \nSET state = 'awaiting_order_menu_option'\nWHERE chat_id = $1;",
         "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
+          "queryReplacement": "={{ $('Compose Context').item.json.chatId  + ''}}"
         }
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1552,
-        -224
+        1280,
+        -440
       ],
       "id": "277411c9-84b0-4e14-8456-6b6201c432ae",
       "name": "Update State awaiting_order_menu_option",
@@ -790,8 +790,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1552,
-        -640
+        1056,
+        -1168
       ],
       "id": "f58d64dc-fee8-42f9-96f6-d04436590962",
       "name": "Update State main_menu1",
@@ -814,8 +814,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1552,
-        -832
+        1056,
+        -1360
       ],
       "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
       "name": "Update State main_menu2",
@@ -832,14 +832,14 @@
         "operation": "executeQuery",
         "query": "UPDATE user_sessions \nSET state = 'awaiting_main_menu_option'\nWHERE chat_id = $1;\n",
         "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
+          "queryReplacement": "={{ $('Compose Context').item.json.chatId  + ''}}"
         }
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1776,
-        -256
+        1280,
+        -696
       ],
       "id": "289cad03-f79a-44f0-8cfa-10e72e83eda1",
       "name": "Update State awaiting_main_menu_option",
@@ -858,8 +858,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        880,
-        880
+        384,
+        376
       ],
       "id": "075efca2-0cf8-4d89-8600-083598696b47",
       "name": "Resolve Product Menu Option"
@@ -875,8 +875,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1328,
-        688
+        832,
+        136
       ],
       "id": "677886c2-aa5d-4758-83f5-ec33c8e3ebec",
       "name": "Update State checkout",
@@ -896,8 +896,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1552,
-        688
+        1056,
+        136
       ],
       "id": "75ff2c44-d2ae-47d1-97ee-f61654de1416",
       "name": "Endereço de Entrega",
@@ -911,58 +911,33 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Opção inválida, tente novamente.",
-        "additionalFields": {
-          "appendAttribution": false,
-          "parse_mode": "HTML"
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1328,
-        96
-      ],
-      "id": "b46cf344-4243-408e-adc4-c66f18c01045",
-      "name": "Send a text message2",
-      "webhookId": "6542bcaf-a5c5-4fc6-97f1-bb77ce31c224",
-      "credentials": {
-        "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Voltando ao menu de pedido.",
-        "additionalFields": {
-          "appendAttribution": false,
-          "parse_mode": "HTML"
-        }
-      },
-      "type": "n8n-nodes-base.telegram",
-      "typeVersion": 1.2,
-      "position": [
-        1328,
-        880
-      ],
-      "id": "e40c53c4-103c-479b-9271-be1ac3498fcd",
-      "name": "Send a text message3",
-      "webhookId": "a0ce8934-b5b8-4a05-bfe1-2e9aac712e37",
-      "credentials": {
-        "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
-          "name": "Telegram account"
-        }
-      }
-    },
-    {
-      "parameters": {
         "rules": {
           "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e4043ff1-fdd4-4a2d-9fc6-5017f85a5110",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "invalid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            },
             {
               "conditions": {
                 "options": {
@@ -1018,8 +993,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1104,
-        880
+        608,
+        360
       ],
       "id": "9cd68022-c975-47bc-b909-ad5e0bc34c75",
       "name": "Product Menu Switch"
@@ -1032,8 +1007,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1776,
-        48
+        1504,
+        -440
       ],
       "id": "87ca8649-6fbe-4852-86ac-7775f0484652",
       "name": "Get User"
@@ -1056,8 +1031,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        2000,
-        48
+        1728,
+        -440
       ],
       "id": "c0a40b87-1413-43ab-a2a1-7396ad771f12",
       "name": "POST Order"
@@ -1073,8 +1048,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2224,
-        48
+        1952,
+        -440
       ],
       "id": "07b838e1-7d2b-4d5c-90da-4cbb276e41c2",
       "name": "Save ChatId",
@@ -1082,6 +1057,132 @@
         "postgres": {
           "id": "sLwbvvNQWvbX83i1",
           "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "Opção inválida, tente novamente.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        832,
+        -440
+      ],
+      "id": "b46cf344-4243-408e-adc4-c66f18c01045",
+      "name": "invalid",
+      "webhookId": "6542bcaf-a5c5-4fc6-97f1-bb77ce31c224",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "Voltando ao menu de pedido.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        328
+      ],
+      "id": "e40c53c4-103c-479b-9271-be1ac3498fcd",
+      "name": "back",
+      "webhookId": "a0ce8934-b5b8-4a05-bfe1-2e9aac712e37",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;\n",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        384,
+        624
+      ],
+      "id": "8dda1452-de44-42e8-bed7-1ce104bebdeb",
+      "name": "Update State main_menu",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://backend:3000/orders/{{ $('Compose Context').item.json.user.data.orderId }}/items",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "productId",
+              "value": "={{ $json.productId }}"
+            },
+            {
+              "name": "quantity",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        832,
+        520
+      ],
+      "id": "b894cb9a-73a1-43a7-818e-9a317818ce07",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
+        "text": "={{ $('Product Menu Switch').item.json.name }} adicionado com sucesso!",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1056,
+        520
+      ],
+      "id": "2bf78e40-728f-4cec-bfd1-3b232842bb29",
+      "name": "Adicionado",
+      "webhookId": "ae2f245c-acba-4201-af1b-1fd3ad25a075",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
         }
       }
     }
@@ -1195,7 +1296,13 @@
             "index": 0
           }
         ],
-        []
+        [
+          {
+            "node": "Update State main_menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Search Session": {
@@ -1311,7 +1418,7 @@
         ],
         [
           {
-            "node": "Send a text message2",
+            "node": "invalid",
             "type": "main",
             "index": 0
           }
@@ -1428,38 +1535,29 @@
         ]
       ]
     },
-    "Send a text message2": {
-      "main": [
-        [
-          {
-            "node": "Update State awaiting_order_menu_option",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message3": {
-      "main": [
-        [
-          {
-            "node": "Update State awaiting_order_menu_option",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Product Menu Switch": {
       "main": [
         [
           {
-            "node": "Send a text message3",
+            "node": "invalid",
             "type": "main",
             "index": 0
           }
         ],
-        []
+        [
+          {
+            "node": "back",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
     "Get User": {
@@ -1494,6 +1592,55 @@
           }
         ]
       ]
+    },
+    "invalid": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "back": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State main_menu": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Adicionado",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Adicionado": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "active": false,
@@ -1502,7 +1649,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "451f0e24-677a-4746-81ab-9c165d9b3e8a",
+  "versionId": "9a5a0f3e-074d-43dd-b3ab-52e849b23866",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
