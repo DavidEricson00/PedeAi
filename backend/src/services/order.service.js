@@ -5,6 +5,7 @@ import {
     getOrderItems as getOrderItemsRepo,
     getOrder as getOrderRepo,
     updateOrder as updateOrderRepo,
+    getOrderSummary as getOrderSummaryRepo
 } from "../repositories/order.repository.js"
 import { 
     getProduct as getProductRepo
@@ -25,6 +26,30 @@ function formatOrder(order) {
         created_at: order.created_at,
         updated_at: order.updated_at
     }   
+}
+
+function formatOrderSummary(order) {
+    return {
+        id: order.id,
+        order_number: order.order_number,
+        address: order.address,
+        status: order.status,
+        total_price: Number(order.total_price),
+        payment: order.payment,
+        change_for: order.change_for,
+        observation: order.observation,
+        user_id: order.user_id,
+        created_at: order.created_at,
+        updated_at: order.updated_at,
+        items: order.items.map(item => ({
+            id: item.id,
+            product_id: item.product_id,
+            name: item.name,
+            quantity: item.quantity,
+            unit_price: Number(item.unit_price),
+            total_price: Number(item.total_price)
+        }))
+    }
 }
 
 function formatItem(item) {
@@ -151,4 +176,17 @@ export async function getOrderItems(orderId) {
     const items = await getOrderItemsRepo(orderId);
 
     return items.map(formatItem);
+}
+
+export async function getOrderSummary(id) {
+
+    if (!id)
+        throw new AppError("Id inválido", 400);
+
+    const order = await getOrderSummaryRepo(id);
+
+    if (!order)
+        throw new AppError("Pedido não encontrado", 404);
+
+    return formatOrderSummary(order);
 }

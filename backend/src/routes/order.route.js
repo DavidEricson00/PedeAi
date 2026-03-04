@@ -4,7 +4,8 @@ import {
     createOrderController,
     getOrderController,
     getOrderItemsController,
-    updateOrderController
+    updateOrderController,
+    getOrderSummaryController
 } from "../controllers/order.controller.js";
 
 const router = Router();
@@ -47,6 +48,75 @@ const router = Router();
  *         description: Erro ao criar pedido
  */
 router.post("/", createOrderController);
+
+/**
+ * @swagger
+ * /orders/{id}/summary:
+ *   get:
+ *     summary: Buscar resumo completo do pedido
+ *     tags: [Orders]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Resumo do pedido com itens
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 id:
+ *                   type: integer
+ *                 order_number:
+ *                   type: string
+ *                 address:
+ *                   type: string
+ *                 status:
+ *                   type: string
+ *                 total_price:
+ *                   type: number
+ *                 payment:
+ *                   type: string
+ *                 change_for:
+ *                   type: number
+ *                 observation:
+ *                   type: string
+ *                 user_id:
+ *                   type: integer
+ *                 created_at:
+ *                   type: string
+ *                   format: date-time
+ *                 updated_at:
+ *                   type: string
+ *                   format: date-time
+ *                 items:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       product_id:
+ *                         type: integer
+ *                       name:
+ *                         type: string
+ *                       quantity:
+ *                         type: integer
+ *                       unit_price:
+ *                         type: number
+ *                       total_price:
+ *                         type: number
+ *       400:
+ *         description: Id inválido
+ *       404:
+ *         description: Pedido não encontrado
+ */
+router.get("/:id/summary", getOrderSummaryController);
 
 /**
  * @swagger

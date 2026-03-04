@@ -70,3 +70,34 @@ export async function checkOrderCart(userId) {
 
     return rows[0];
 }
+
+export async function getOrderSummary(orderId) {
+    const orderResult = await pool.query(`
+        SELECT *
+        FROM orders
+        WHERE id = $1
+    `, [orderId]);
+
+    const order = orderResult.rows[0];
+
+    if (!order) return null;
+
+    const itemsResult = await pool.query(`
+        SELECT 
+            oi.id,
+            oi.product_id,
+            p.name,
+            oi.quantity,
+            oi.unit_price,
+            oi.total_price
+        FROM order_items oi
+        JOIN products p ON p.id = oi.product_id
+        WHERE oi.order_id = $1
+        ORDER BY oi.created_at ASC
+    `, [orderId]);
+
+    return {
+        ...order,
+        items: itemsResult.rows
+    };
+}

@@ -3,7 +3,8 @@ import {
     updateOrder, 
     getOrder, 
     addOrderItem,
-    getOrderItems
+    getOrderItems,
+    getOrderSummary
 } from "../services/order.service.js";
 
 export async function createOrderController(req, res, next) {
@@ -73,6 +74,18 @@ export async function getOrderItemsController(req, res, next) {
 
         return res.status(200).json(items);
     } catch(error) {
+        next(error);
+    }
+}
+
+export async function getOrderSummaryController(req, res, next) {
+    try {
+        const { id } = req.params;
+
+        const summary = await getOrderSummary(id);
+
+        return res.status(200).json(summary);
+    } catch (error) {
         next(error);
     }
 }
