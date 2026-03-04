@@ -3,20 +3,49 @@
   "nodes": [
     {
       "parameters": {
-        "updates": [
-          "message"
-        ],
-        "additionalFields": {}
+        "jsCode": "const products = items.map(item => item.json);\n\nconst chatId = $('Compose Context').first().json.chatId;\nconst categoryName = $('Order Menu Switch').first().json.name;\n\nlet menu = `📕 Cardápio de ${categoryName}\\n\\n`;\n\nlet counter = 1;\n\nlet optionsMap = {};\n\nfor (const product of products) {\n\n  if (!product.active) continue;\n\n  menu += `[ ${counter} ] - ${product.name} (R$ ${product.price})\\n`;\n\n  optionsMap[counter] = {\n    type: \"select_product\",\n    productId: product.id,\n    name: product.name,\n    price: product.price\n  };\n\n  counter++;\n}\n\nmenu += `[ ${counter} ] - Voltar\\n`;\n\noptionsMap[counter] = {\n  type: \"back_to_order_menu\"\n};\n\nmenu += \"\\nDigite o número da opção desejada.\";\n\nreturn [{\n  json: {\n    chatId,\n    menu,\n    optionsMap\n  }\n}];"
       },
-      "type": "n8n-nodes-base.telegramTrigger",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        496
+      ],
+      "id": "4ccf96c6-cd77-4cca-8d6f-55505b3e37fa",
+      "name": "Render Products Menu"
+    },
+    {
+      "parameters": {
+        "url": "http://backend:3000/categories",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2448,
+        48
+      ],
+      "id": "336aeefa-e1b3-4127-8d6e-e5ebb20e34ea",
+      "name": "Get Categories"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.user.chatId }}",
+        "text": "Opção inválida, tente novamente.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -96,
-        -312
+        1552,
+        -448
       ],
-      "id": "ce5aadf9-d7d5-4523-bfb4-b3c72ff52972",
-      "name": "Telegram Trigger",
-      "webhookId": "e76d2656-c2f5-4d2d-bf50-251a9aeb2d3b",
+      "id": "e2c7d83c-f42c-4c0e-a51d-beb830728ab2",
+      "name": "Erro",
+      "webhookId": "13325990-e870-47ae-9f7a-feb3d9575fd6",
       "credentials": {
         "telegramApi": {
           "id": "DTCzBBOAY1sVtYZS",
@@ -26,172 +55,8 @@
     },
     {
       "parameters": {
-        "jsCode": "return [{\n  json: {\n    chatId: $json.message.chat.id.toString(),\n    text: ($json.message.text || \"\").trim()\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        128,
-        -312
-      ],
-      "id": "cfc8f7f5-0851-4b97-9212-f4d57e474c10",
-      "name": "Extract Input"
-    },
-    {
-      "parameters": {
-        "jsCode": "return [{\n  json: {\n    chatId: String($json.chat_id),\n    user: {\n      chatId: $json.chat_id,\n      state: $json.state,\n      data: $json.data || {}\n    },\n    input: {\n      text: $node[\"Extract Input\"].json.text\n    }\n  }\n}];"
-      },
-      "type": "n8n-nodes-base.code",
-      "typeVersion": 2,
-      "position": [
-        576,
-        -312
-      ],
-      "id": "36fc62b6-05e0-45ee-bba6-d9b053b8d8f2",
-      "name": "Compose Context"
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "WITH inserted AS (\n  INSERT INTO user_sessions (chat_id, state)\n  VALUES ($1, 'main_menu')\n  ON CONFLICT (chat_id) DO NOTHING\n  RETURNING chat_id, state, data\n)\nSELECT chat_id, state, data FROM inserted\nUNION ALL\nSELECT chat_id, state, data\nFROM user_sessions\nWHERE chat_id = $1\nLIMIT 1;",
-        "options": {
-          "queryReplacement": "={{$json.chatId}}"
-        }
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        352,
-        -312
-      ],
-      "id": "5af15a3e-2dc6-4017-9b9d-76d474f087d8",
-      "name": "Search Session",
-      "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "rules": {
-          "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.user.state }}",
-                    "rightValue": "main_menu",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    },
-                    "id": "afa53c6d-f8de-4e5e-bc5a-12a112b3a3f7"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "main_menu"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "39b1c39f-e54c-4ed5-889b-38cf2fcba9b5",
-                    "leftValue": "={{ $json.user.state }}",
-                    "rightValue": "awaiting_main_menu_option",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "awaiting_main_menu_option"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "74fdafbd-e3cd-46cd-b2fe-b73412158aad",
-                    "leftValue": "order_menu",
-                    "rightValue": "order_menu",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "order_menu"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "e4f6ac59-a6a0-44ad-a6d5-af2774ca5653",
-                    "leftValue": "awaiting_order_menu_option",
-                    "rightValue": "awaiting_order_menu_option",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "awaiting_order_menu_option"
-            }
-          ]
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.switch",
-      "typeVersion": 3.4,
-      "position": [
-        800,
-        -344
-      ],
-      "id": "71439b89-8e9a-409b-85d1-c2d42a0efe52",
-      "name": "Switch"
-    },
-    {
-      "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Menu\n1 - Pedido\n2 - Acompanhar\n3 - Falar Atendente",
+        "text": "Você escolheu falar com atendente.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -200,11 +65,11 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1696,
-        -576
+        1776,
+        -640
       ],
-      "id": "8864d765-40ca-4467-a66a-eef677507c45",
-      "name": "main_menu",
+      "id": "8037b9db-4853-4dce-8a73-98656638398d",
+      "name": "falar_atendente",
       "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
       "credentials": {
         "telegramApi": {
@@ -215,25 +80,26 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'awaiting_main_menu_option'\nWHERE chat_id = $1;\n",
-        "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
+        "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
+        "text": "Você escolheu acompanhar pedido.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
         }
       },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
       "position": [
-        1472,
-        -576
+        1776,
+        -832
       ],
-      "id": "289cad03-f79a-44f0-8cfa-10e72e83eda1",
-      "name": "Update State",
-      "alwaysOutputData": true,
+      "id": "5b71a6a6-6b58-428a-85d1-77e76b8554e6",
+      "name": "acompanhar_pedido",
+      "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
       "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
         }
       }
     },
@@ -241,30 +107,6 @@
       "parameters": {
         "rules": {
           "values": [
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "leftValue": "={{ $json.input.text }}",
-                    "rightValue": "1",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    },
-                    "id": "90701c65-e46d-4520-806d-14cab578f4d7"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "pedido"
-            },
             {
               "conditions": {
                 "options": {
@@ -314,6 +156,30 @@
               },
               "renameOutput": true,
               "outputKey": "falar_atendente"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.input.text }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "90701c65-e46d-4520-806d-14cab578f4d7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "pedido"
             }
           ]
         },
@@ -324,65 +190,16 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1024,
-        -320
+        1328,
+        -624
       ],
       "id": "cf3f016c-2fe6-4290-ad0a-890a5be4f0fb",
-      "name": "Main Menu Switch",
-      "disabled": true
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
-        "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
-        }
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        1248,
-        -208
-      ],
-      "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
-      "name": "Update State1",
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
-        "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
-        }
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        1248,
-        -16
-      ],
-      "id": "f58d64dc-fee8-42f9-96f6-d04436590962",
-      "name": "Update State2",
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
-        }
-      }
+      "name": "Main Menu Switch"
     },
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Você escolheu acompanhar pedido.",
+        "text": "Menu\n1 - Pedido\n2 - Acompanhar\n3 - Falar Atendente",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -391,12 +208,246 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1472,
+        2000,
+        -256
+      ],
+      "id": "8864d765-40ca-4467-a66a-eef677507c45",
+      "name": "main_menu",
+      "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "091525a0-0f8b-4e84-ae5e-43a15e3a1dbe",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "awaiting_main_menu_option",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "awaiting_main_menu_option"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "main_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "afa53c6d-f8de-4e5e-bc5a-12a112b3a3f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "main_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "74fdafbd-e3cd-46cd-b2fe-b73412158aad",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "order_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "order_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e4f6ac59-a6a0-44ad-a6d5-af2774ca5653",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "awaiting_order_menu_option",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "awaiting_order_menu_option"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "de37b5d4-de8a-4325-90d2-ac8165e6bf60",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "awaiting_product_menu_option",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "awaiting_product_menu_option"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e4c7c40d-cfa4-405b-a381-01fb498238ec",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "checkout",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "checkout"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        656,
         -192
       ],
-      "id": "5b71a6a6-6b58-428a-85d1-77e76b8554e6",
-      "name": "acompanhar_pedido",
-      "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
+      "id": "71439b89-8e9a-409b-85d1-c2d42a0efe52",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "WITH ensure_user AS (\n  INSERT INTO users (telegram_chat_id)\n  VALUES ($1)\n  ON CONFLICT (telegram_chat_id) DO NOTHING\n),\ninserted AS (\n  INSERT INTO user_sessions (chat_id, state)\n  VALUES ($1, 'main_menu')\n  ON CONFLICT (chat_id) DO NOTHING\n  RETURNING chat_id, state, data\n)\nSELECT chat_id, state, data FROM inserted\nUNION ALL\nSELECT chat_id, state, data\nFROM user_sessions\nWHERE chat_id = $1\nLIMIT 1;",
+        "options": {
+          "queryReplacement": "={{$json.chatId}}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        208,
+        -128
+      ],
+      "id": "5af15a3e-2dc6-4017-9b9d-76d474f087d8",
+      "name": "Search Session",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    chatId: String($json.chat_id),\n    user: {\n      chatId: $json.chat_id,\n      state: $json.state,\n      data: $json.data || {}\n    },\n    input: {\n      text: $node[\"Extract Input\"].json.text\n    }\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        432,
+        -128
+      ],
+      "id": "36fc62b6-05e0-45ee-bba6-d9b053b8d8f2",
+      "name": "Compose Context"
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  json: {\n    chatId: $json.message.chat.id.toString(),\n    text: ($json.message.text || \"\").trim()\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "cfc8f7f5-0851-4b97-9212-f4d57e474c10",
+      "name": "Extract Input"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -240,
+        -128
+      ],
+      "id": "ce5aadf9-d7d5-4523-bfb4-b3c72ff52972",
+      "name": "Telegram Trigger",
+      "webhookId": "e76d2656-c2f5-4d2d-bf50-251a9aeb2d3b",
       "credentials": {
         "telegramApi": {
           "id": "DTCzBBOAY1sVtYZS",
@@ -406,8 +457,21 @@
     },
     {
       "parameters": {
+        "jsCode": "const categories = items.map(item => item.json);\nconst chatId = $json.chatId;\n\nlet menu = \"🛒 Seu Pedido\\n\\n\";\nmenu += \"O que você gostaria de fazer agora?\\n\\n\";\n\nlet counter = 1;\nlet optionsMap = {};\n\nfor (const category of categories) {\n  menu += `[ ${counter} ] - Adicionar ${category.name}\\n`;\n\n  optionsMap[counter] = {\n    type: \"select_category\",\n    categoryId: category.id,\n    name: category.name\n  };\n\n  counter++;\n}\n\nmenu += `[ ${counter} ] - Voltar ao menu principal\\n`;\noptionsMap[counter] = { type: \"menu\" };\ncounter++;\n\nmenu += `[ ${counter} ] - Finalizar Pedido\\n`;\noptionsMap[counter] = { type: \"checkout\" };\n\nmenu += \"\\nDigite o número da opção desejada.\";\n\nreturn [{\n  json: {\n    chatId,\n    menu,\n    optionsMap\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        48
+      ],
+      "id": "75768172-35e9-4bf3-8f31-2452e7008c0e",
+      "name": "Render Order Menu"
+    },
+    {
+      "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Você escolheu falar com atendente.",
+        "text": "={{ $('Render Order Menu').item.json.menu }}",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -416,12 +480,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1472,
-        0
+        3120,
+        48
       ],
-      "id": "8037b9db-4853-4dce-8a73-98656638398d",
-      "name": "falar_atendente",
-      "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
+      "id": "5fe7aad2-847e-4ece-a179-d606e4c8c439",
+      "name": "Order Menu",
+      "webhookId": "5d6deb93-6fc8-408b-a32c-02072c4f0fd7",
       "credentials": {
         "telegramApi": {
           "id": "DTCzBBOAY1sVtYZS",
@@ -431,7 +495,423 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $json.user.chatId }}",
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_order_menu_option',\n  data = jsonb_build_object(\n    'optionsMap', $2::jsonb\n  )\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}, {{ $json.optionsMap }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        2896,
+        48
+      ],
+      "id": "c64c139a-1d6b-4f98-93b6-99746d185def",
+      "name": "Save Options Map",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const chatId = $json.chatId;\nconst text = $json.input.text;\n\nconst number = Number(text);\nconst optionsMap = $json.user.data?.optionsMap;\n\nif (!optionsMap) {\n  return [{\n    json: {\n      chatId,\n      error: \"no_options_map\"\n    }\n  }];\n}\n\nconst option = optionsMap[number];\n\nif (!option) {\n  return [{\n    json: {\n      chatId,\n      type: \"invalid\"\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    chatId,\n    type: option.type,\n    categoryId: option.categoryId,\n    name: option.name\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        400
+      ],
+      "id": "831a646f-b8e6-4308-9549-40013dc66438",
+      "name": "Resolve Order Menu Option"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "2f3b2a79-611e-4fd0-a2cd-8b462b65f7f9",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "select_category",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0d1da128-48eb-482b-90b5-2ad9cfc7bcaf"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "select_category"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1ebf498e-c50a-499f-93c6-92189290cb18",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "checkout",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "checkout"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d2c1c22c-344c-4528-8d56-0b9273812aae",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "invalid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        368
+      ],
+      "id": "1733060a-48c9-40f1-b430-d3334efca6e1",
+      "name": "Order Menu Switch"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "Retornando ao menu principal.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        288
+      ],
+      "id": "159aa956-b8c5-4854-bafb-0002393c772b",
+      "name": "menu",
+      "webhookId": "dc5d1936-2548-4f2c-a46d-b7f45a767694",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://backend:3000/categories/{{ $json.categoryId }}/products",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1328,
+        496
+      ],
+      "id": "41f13c6a-b0a8-452e-8968-38ec906c243d",
+      "name": "Get Products by Category"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions\nSET data = data - 'optionsMap'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1328,
+        288
+      ],
+      "id": "7530c4e2-b7a6-459a-83cf-5f7c39684e1b",
+      "name": "Erase data",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Render Products Menu').item.json.chatId }}",
+        "text": "={{ $('Render Products Menu').item.json.menu }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        2000,
+        496
+      ],
+      "id": "1412bc91-775f-4264-8128-f92f59c4db34",
+      "name": "Products Menu",
+      "webhookId": "13d269fa-c2d3-4a14-a103-07ce0ab657d3",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions\nSET \n  state = 'awaiting_product_menu_option',\n  data = jsonb_build_object(\n    'optionsMap', $2::jsonb\n  )\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}, {{ $json.optionsMap }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1776,
+        496
+      ],
+      "id": "e44d6e5b-e46a-4670-82ff-b3b613d1245d",
+      "name": "Save Products Map",
+      "alwaysOutputData": false,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'awaiting_order_menu_option'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1552,
+        -224
+      ],
+      "id": "277411c9-84b0-4e14-8456-6b6201c432ae",
+      "name": "Update State awaiting_order_menu_option",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1552,
+        -640
+      ],
+      "id": "f58d64dc-fee8-42f9-96f6-d04436590962",
+      "name": "Update State main_menu1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1552,
+        -832
+      ],
+      "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
+      "name": "Update State main_menu2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'awaiting_main_menu_option'\nWHERE chat_id = $1;\n",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1776,
+        -256
+      ],
+      "id": "289cad03-f79a-44f0-8cfa-10e72e83eda1",
+      "name": "Update State awaiting_main_menu_option",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const chatId = $json.chatId;\nconst text = $json.input.text;\n\nconst number = Number(text);\nconst optionsMap = $json.user.data?.optionsMap;\n\nif (!optionsMap) {\n  return [{\n    json: {\n      chatId,\n      error: \"no_options_map\"\n    }\n  }];\n}\n\nconst option = optionsMap[number];\n\nif (!option) {\n  return [{\n    json: {\n      chatId,\n      type: \"invalid\"\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    chatId,\n    type: option.type,\n    productId: option.productId,\n    name: option.name,\n    price: option.price\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        880
+      ],
+      "id": "075efca2-0cf8-4d89-8600-083598696b47",
+      "name": "Resolve Product Menu Option"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'checkout'\nWHERE chat_id = $1;\n",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1328,
+        688
+      ],
+      "id": "677886c2-aa5d-4758-83f5-ec33c8e3ebec",
+      "name": "Update State checkout",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "Mande o endereço de entrega.",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1552,
+        688
+      ],
+      "id": "75ff2c44-d2ae-47d1-97ee-f61654de1416",
+      "name": "Endereço de Entrega",
+      "webhookId": "20052272-9007-4b65-b3ad-971687d2d3da",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
         "text": "Opção inválida, tente novamente.",
         "additionalFields": {
           "appendAttribution": false,
@@ -441,12 +921,12 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1248,
-        176
+        1328,
+        96
       ],
-      "id": "e2c7d83c-f42c-4c0e-a51d-beb830728ab2",
-      "name": "Erro",
-      "webhookId": "13325990-e870-47ae-9f7a-feb3d9575fd6",
+      "id": "b46cf344-4243-408e-adc4-c66f18c01045",
+      "name": "Send a text message2",
+      "webhookId": "6542bcaf-a5c5-4fc6-97f1-bb77ce31c224",
       "credentials": {
         "telegramApi": {
           "id": "DTCzBBOAY1sVtYZS",
@@ -456,35 +936,148 @@
     },
     {
       "parameters": {
-        "url": "http://backend:3000/categories",
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "Voltando ao menu de pedido.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1328,
+        880
+      ],
+      "id": "e40c53c4-103c-479b-9271-be1ac3498fcd",
+      "name": "Send a text message3",
+      "webhookId": "a0ce8934-b5b8-4a05-bfe1-2e9aac712e37",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "26542482-bb37-4dc9-9f16-c132c3d4ac97",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "back",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "back"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "select_product",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "68acc263-1b7f-480d-a943-038dad379539"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "select_product"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1104,
+        880
+      ],
+      "id": "9cd68022-c975-47bc-b909-ad5e0bc34c75",
+      "name": "Product Menu Switch"
+    },
+    {
+      "parameters": {
+        "url": "=http://backend:3000/users/telegram/{{ $('Compose Context').item.json.user.chatId }}",
         "options": {}
       },
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1472,
-        -384
+        1776,
+        48
       ],
-      "id": "336aeefa-e1b3-4127-8d6e-e5ebb20e34ea",
-      "name": "Get Categories"
+      "id": "87ca8649-6fbe-4852-86ac-7775f0484652",
+      "name": "Get User"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://backend:3000/orders",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "user_id",
+              "value": "={{$json.id}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        2000,
+        48
+      ],
+      "id": "c0a40b87-1413-43ab-a2a1-7396ad771f12",
+      "name": "POST Order"
     },
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'order_menu'\nWHERE chat_id = $1;",
+        "query": "UPDATE user_sessions\nSET data = jsonb_set(\n  COALESCE(data, '{}'::jsonb),\n  '{orderId}',\n  to_jsonb($2::int)\n)\nWHERE chat_id = $1;",
         "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + '' }}, {{$json.id}}"
         }
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1248,
-        -400
+        2224,
+        48
       ],
-      "id": "ca261722-e210-4bab-aec7-f2bfd483d9bc",
-      "name": "Update State4",
-      "alwaysOutputData": true,
+      "id": "07b838e1-7d2b-4d5c-90da-4cbb276e41c2",
+      "name": "Save ChatId",
       "credentials": {
         "postgres": {
           "id": "sLwbvvNQWvbX83i1",
@@ -511,26 +1104,98 @@
         ]
       ]
     },
-    "Telegram Trigger": {
+    "Render Products Menu": {
       "main": [
         [
           {
-            "node": "Extract Input",
+            "node": "Save Products Map",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Extract Input": {
+    "Main Menu Switch": {
       "main": [
         [
           {
-            "node": "Search Session",
+            "node": "Update State main_menu2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update State main_menu1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Erro",
             "type": "main",
             "index": 0
           }
         ]
+      ]
+    },
+    "Erro": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_main_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Main Menu Switch",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update State awaiting_main_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve Order Menu Option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Resolve Product Menu Option",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
       ]
     },
     "Search Session": {
@@ -555,60 +1220,160 @@
         ]
       ]
     },
-    "Switch": {
+    "Extract Input": {
       "main": [
         [
           {
-            "node": "Update State",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Main Menu Switch",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Get Categories",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        []
-      ]
-    },
-    "main_menu": {
-      "main": [
-        []
-      ]
-    },
-    "Update State": {
-      "main": [
-        [
-          {
-            "node": "main_menu",
+            "node": "Search Session",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Update State1": {
+    "Telegram Trigger": {
       "main": [
         [
           {
-            "node": "acompanhar_pedido",
+            "node": "Extract Input",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Update State2": {
+    "Get Categories": {
+      "main": [
+        [
+          {
+            "node": "Render Order Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render Order Menu": {
+      "main": [
+        [
+          {
+            "node": "Save Options Map",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Options Map": {
+      "main": [
+        [
+          {
+            "node": "Order Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resolve Order Menu Option": {
+      "main": [
+        [
+          {
+            "node": "Order Menu Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Menu Switch": {
+      "main": [
+        [
+          {
+            "node": "Erase data",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Products by Category",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update State checkout",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "menu": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_main_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Products by Category": {
+      "main": [
+        [
+          {
+            "node": "Render Products Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Erase data": {
+      "main": [
+        [
+          {
+            "node": "menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save Products Map": {
+      "main": [
+        [
+          {
+            "node": "Products Menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State awaiting_order_menu_option": {
+      "main": [
+        [
+          {
+            "node": "Get User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State main_menu1": {
       "main": [
         [
           {
@@ -619,55 +1384,107 @@
         ]
       ]
     },
-    "Main Menu Switch": {
+    "Update State main_menu2": {
       "main": [
         [
           {
-            "node": "Update State4",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Update State1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Update State2",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Erro",
+            "node": "acompanhar_pedido",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Erro": {
+    "Update State awaiting_main_menu_option": {
       "main": [
         [
           {
-            "node": "Update State",
+            "node": "main_menu",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Get Categories": {
+    "Resolve Product Menu Option": {
       "main": [
+        [
+          {
+            "node": "Product Menu Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State checkout": {
+      "main": [
+        [
+          {
+            "node": "Endereço de Entrega",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message2": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message3": {
+      "main": [
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Product Menu Switch": {
+      "main": [
+        [
+          {
+            "node": "Send a text message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
         []
       ]
     },
-    "Update State4": {
+    "Get User": {
+      "main": [
+        [
+          {
+            "node": "POST Order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "POST Order": {
+      "main": [
+        [
+          {
+            "node": "Save ChatId",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save ChatId": {
       "main": [
         [
           {
@@ -685,7 +1502,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "b8ae6048-2ffa-47ec-8230-ee5156e2caa7",
+  "versionId": "451f0e24-677a-4746-81ab-9c165d9b3e8a",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
