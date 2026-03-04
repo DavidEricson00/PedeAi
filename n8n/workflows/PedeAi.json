@@ -8,8 +8,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1056,
-        -56
+        1280,
+        -192
       ],
       "id": "4ccf96c6-cd77-4cca-8d6f-55505b3e37fa",
       "name": "Render Products Menu"
@@ -23,7 +23,7 @@
       "typeVersion": 4.4,
       "position": [
         2176,
-        -440
+        -672
       ],
       "id": "336aeefa-e1b3-4127-8d6e-e5ebb20e34ea",
       "name": "Get Categories"
@@ -31,7 +31,7 @@
     {
       "parameters": {
         "chatId": "={{ $json.user.chatId }}",
-        "text": "Opção inválida, tente novamente.",
+        "text": "Por favor, digite um dos números disponíveis no menu.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -40,8 +40,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        -976
+        1728,
+        -1024
       ],
       "id": "e2c7d83c-f42c-4c0e-a51d-beb830728ab2",
       "name": "Erro",
@@ -56,7 +56,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Você escolheu falar com atendente.",
+        "text": "💬 Estamos te encaminhando para um atendente.\n\nPor favor, aguarde um momento 😊",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -65,7 +65,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1280,
+        1504,
         -1168
       ],
       "id": "8037b9db-4853-4dce-8a73-98656638398d",
@@ -81,7 +81,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Você escolheu acompanhar pedido.",
+        "text": "📦 Digite o número do seu pedido para consulta-lo",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -90,7 +90,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1280,
+        1504,
         -1360
       ],
       "id": "5b71a6a6-6b58-428a-85d1-77e76b8554e6",
@@ -190,8 +190,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        832,
-        -1184
+        1056,
+        -1136
       ],
       "id": "cf3f016c-2fe6-4290-ad0a-890a5be4f0fb",
       "name": "Main Menu Switch"
@@ -199,7 +199,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "Menu\n1 - Pedido\n2 - Acompanhar\n3 - Falar Atendente",
+        "text": "👋 Olá! Como podemos te ajudar?\n\n[ 1 ] - Fazer um novo pedido  \n[ 2 ] - Acompanhar meu pedido  \n[ 3 ] - Falar com um atendente\n\nResponda com o número da opção.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -208,8 +208,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1504,
-        -696
+        2176,
+        -864
       ],
       "id": "8864d765-40ca-4467-a66a-eef677507c45",
       "name": "main_menu",
@@ -225,6 +225,31 @@
       "parameters": {
         "rules": {
           "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bad975f9-ad19-4b98-86d6-c6074296898b",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "get_order",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "get_order"
+            },
             {
               "conditions": {
                 "options": {
@@ -378,7 +403,7 @@
       "typeVersion": 3.4,
       "position": [
         160,
-        -664
+        -352
       ],
       "id": "71439b89-8e9a-409b-85d1-c2d42a0efe52",
       "name": "Switch"
@@ -395,7 +420,7 @@
       "typeVersion": 2.6,
       "position": [
         -288,
-        -600
+        -288
       ],
       "id": "5af15a3e-2dc6-4017-9b9d-76d474f087d8",
       "name": "Search Session",
@@ -414,7 +439,7 @@
       "typeVersion": 2,
       "position": [
         -64,
-        -600
+        -288
       ],
       "id": "36fc62b6-05e0-45ee-bba6-d9b053b8d8f2",
       "name": "Compose Context"
@@ -427,7 +452,7 @@
       "typeVersion": 2,
       "position": [
         -512,
-        -600
+        -288
       ],
       "id": "cfc8f7f5-0851-4b97-9212-f4d57e474c10",
       "name": "Extract Input"
@@ -443,7 +468,7 @@
       "typeVersion": 1.2,
       "position": [
         -736,
-        -600
+        -288
       ],
       "id": "ce5aadf9-d7d5-4523-bfb4-b3c72ff52972",
       "name": "Telegram Trigger",
@@ -463,7 +488,7 @@
       "typeVersion": 2,
       "position": [
         2400,
-        -440
+        -672
       ],
       "id": "75768172-35e9-4bf3-8f31-2452e7008c0e",
       "name": "Render Order Menu"
@@ -481,7 +506,7 @@
       "typeVersion": 1.2,
       "position": [
         2848,
-        -440
+        -672
       ],
       "id": "5fe7aad2-847e-4ece-a179-d606e4c8c439",
       "name": "Order Menu",
@@ -505,7 +530,7 @@
       "typeVersion": 2.6,
       "position": [
         2624,
-        -440
+        -672
       ],
       "id": "c64c139a-1d6b-4f98-93b6-99746d185def",
       "name": "Save Options Map",
@@ -523,8 +548,8 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        384,
-        -248
+        608,
+        -288
       ],
       "id": "831a646f-b8e6-4308-9549-40013dc66438",
       "name": "Resolve Order Menu Option"
@@ -638,8 +663,8 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        608,
-        -280
+        832,
+        -320
       ],
       "id": "1733060a-48c9-40f1-b430-d3334efca6e1",
       "name": "Order Menu Switch"
@@ -647,7 +672,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Retornando ao menu principal.",
+        "text": "🔙 Você voltou ao menu principal.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -656,8 +681,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        -248
+        1728,
+        -368
       ],
       "id": "159aa956-b8c5-4854-bafb-0002393c772b",
       "name": "menu",
@@ -677,8 +702,8 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        832,
-        -56
+        1056,
+        -192
       ],
       "id": "41f13c6a-b0a8-452e-8968-38ec906c243d",
       "name": "Get Products by Category"
@@ -686,16 +711,16 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "UPDATE user_sessions\nSET data = data - 'optionsMap'\nWHERE chat_id = $1;",
+        "query": "UPDATE user_sessions\nSET data = data - 'optionsMap' - 'orderId'\nWHERE chat_id = $1;",
         "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
+          "queryReplacement": "={{ $('Compose Context').item.json.chatId  + ''}}"
         }
       },
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        832,
-        -248
+        1504,
+        -384
       ],
       "id": "7530c4e2-b7a6-459a-83cf-5f7c39684e1b",
       "name": "Erase data",
@@ -718,8 +743,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1504,
-        40
+        1728,
+        -176
       ],
       "id": "1412bc91-775f-4264-8128-f92f59c4db34",
       "name": "Products Menu",
@@ -742,8 +767,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1280,
-        40
+        1504,
+        -192
       ],
       "id": "e44d6e5b-e46a-4670-82ff-b3b613d1245d",
       "name": "Save Products Map",
@@ -767,7 +792,7 @@
       "typeVersion": 2.6,
       "position": [
         1280,
-        -440
+        -832
       ],
       "id": "277411c9-84b0-4e14-8456-6b6201c432ae",
       "name": "Update State awaiting_order_menu_option",
@@ -790,35 +815,11 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1056,
+        1280,
         -1168
       ],
       "id": "f58d64dc-fee8-42f9-96f6-d04436590962",
       "name": "Update State main_menu1",
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
-        "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
-        }
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        1056,
-        -1360
-      ],
-      "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
-      "name": "Update State main_menu2",
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
@@ -838,8 +839,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1280,
-        -696
+        1952,
+        -864
       ],
       "id": "289cad03-f79a-44f0-8cfa-10e72e83eda1",
       "name": "Update State awaiting_main_menu_option",
@@ -859,7 +860,7 @@
       "typeVersion": 2,
       "position": [
         384,
-        376
+        352
       ],
       "id": "075efca2-0cf8-4d89-8600-083598696b47",
       "name": "Resolve Product Menu Option"
@@ -875,8 +876,8 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        832,
-        136
+        1056,
+        0
       ],
       "id": "677886c2-aa5d-4758-83f5-ec33c8e3ebec",
       "name": "Update State checkout",
@@ -890,14 +891,17 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Mande o endereço de entrega.",
-        "additionalFields": {}
+        "text": "📍 Qual é o endereço para entrega?",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        136
+        1280,
+        0
       ],
       "id": "75ff2c44-d2ae-47d1-97ee-f61654de1416",
       "name": "Endereço de Entrega",
@@ -994,7 +998,7 @@
       "typeVersion": 3.4,
       "position": [
         608,
-        360
+        336
       ],
       "id": "9cd68022-c975-47bc-b909-ad5e0bc34c75",
       "name": "Product Menu Switch"
@@ -1008,7 +1012,7 @@
       "typeVersion": 4.4,
       "position": [
         1504,
-        -440
+        -832
       ],
       "id": "87ca8649-6fbe-4852-86ac-7775f0484652",
       "name": "Get User"
@@ -1032,7 +1036,7 @@
       "typeVersion": 4.4,
       "position": [
         1728,
-        -440
+        -832
       ],
       "id": "c0a40b87-1413-43ab-a2a1-7396ad771f12",
       "name": "POST Order"
@@ -1049,7 +1053,7 @@
       "typeVersion": 2.6,
       "position": [
         1952,
-        -440
+        -672
       ],
       "id": "07b838e1-7d2b-4d5c-90da-4cbb276e41c2",
       "name": "Save ChatId",
@@ -1063,7 +1067,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Opção inválida, tente novamente.",
+        "text": "Por favor, digite um dos números disponíveis no menu.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -1072,8 +1076,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        832,
-        -440
+        1056,
+        -528
       ],
       "id": "b46cf344-4243-408e-adc4-c66f18c01045",
       "name": "invalid",
@@ -1088,7 +1092,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.chatId }}",
-        "text": "Voltando ao menu de pedido.",
+        "text": "🔙 Você voltou ao seu pedido.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -1098,7 +1102,7 @@
       "typeVersion": 1.2,
       "position": [
         1056,
-        328
+        352
       ],
       "id": "e40c53c4-103c-479b-9271-be1ac3498fcd",
       "name": "back",
@@ -1112,24 +1116,26 @@
     },
     {
       "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;\n",
-        "options": {
-          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId + ''  }}"
+        "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
+        "text": "=✅ {{ $('Product Menu Switch').item.json.name }} foi adicionado ao seu pedido!",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
         }
       },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
       "position": [
-        384,
-        624
+        1056,
+        544
       ],
-      "id": "8dda1452-de44-42e8-bed7-1ce104bebdeb",
-      "name": "Update State main_menu",
+      "id": "2bf78e40-728f-4cec-bfd1-3b232842bb29",
+      "name": "Adicionado",
+      "webhookId": "ae2f245c-acba-4201-af1b-1fd3ad25a075",
       "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
         }
       }
     },
@@ -1156,15 +1162,43 @@
       "typeVersion": 4.4,
       "position": [
         832,
-        520
+        544
       ],
       "id": "b894cb9a-73a1-43a7-818e-9a317818ce07",
-      "name": "HTTP Request"
+      "name": "POST Item"
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=http://backend:3000/orders/{{ $('Compose Context').item.json.user.data.orderId }}",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "address",
+              "value": "={{ $('Compose Context').item.json.input.text }}"
+            },
+            {
+              "name": "status",
+              "value": "pedido_recebido"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        384,
+        736
+      ],
+      "id": "1904bedb-c48a-4668-bd06-2f5e301a6679",
+      "name": "PATCH Order"
     },
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "={{ $('Product Menu Switch').item.json.name }} adicionado com sucesso!",
+        "text": "🎉 Pedido realizado com sucesso!\n\nEm breve ele será preparado e enviado para você.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -1173,12 +1207,306 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        520
+        608,
+        736
       ],
-      "id": "2bf78e40-728f-4cec-bfd1-3b232842bb29",
-      "name": "Adicionado",
-      "webhookId": "ae2f245c-acba-4201-af1b-1fd3ad25a075",
+      "id": "d651da27-c95f-4e5b-b7cb-7fc8ae924e82",
+      "name": "Sucess",
+      "webhookId": "a81f153d-41f8-4f24-909c-1333b7563437",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://backend:3000/orders/{{ $('Compose Context').item.json.user.data.orderId }}/summary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        832,
+        736
+      ],
+      "id": "ef36d734-2a46-4fe2-88fb-52a2096fe0f5",
+      "name": "GET Order Summary"
+    },
+    {
+      "parameters": {
+        "jsCode": "const order = items[0].json;\n\nlet message = `🧾 Resumo do seu pedido #${order.order_number}\\n\\n`;\n\nfor (const item of order.items) {\n  message += `• ${item.quantity}x ${item.name} - R$ ${item.total_price.toFixed(2)}\\n`;\n}\n\nmessage += `\\n💰 Total: R$ ${order.total_price.toFixed(2)}`;\n\nif (order.payment) {\n  message += `\\n💳 Pagamento: ${order.payment}`;\n}\n\nif (order.address) {\n  message += `\\n📍 Entrega: ${order.address}`;\n}\n\nif (order.observation) {\n  message += `\\n📝 Obs: ${order.observation}`;\n}\n\nreturn [\n  {\n    json: {\n      message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1056,
+        736
+      ],
+      "id": "66fb46ea-6ebc-4eec-a0e8-77a02bccbb64",
+      "name": "Order Summary Message"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1280,
+        736
+      ],
+      "id": "4f5621a4-bca1-4d46-ae10-7d738f3a9884",
+      "name": "Send Order Summary",
+      "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "order-status",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        -528
+      ],
+      "id": "c08708a4-acfa-4580-b7c2-39b2b5ca5eb4",
+      "name": "Webhook",
+      "webhookId": "9d28957f-eaed-4cdf-9f3e-c0b56c6f89df"
+    },
+    {
+      "parameters": {
+        "url": "=http://backend:3000/users/{{ $json.body.user_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -544,
+        -528
+      ],
+      "id": "66f0356c-87df-4826-9c99-f93629ddba14",
+      "name": "GET User"
+    },
+    {
+      "parameters": {
+        "jsCode": "const orderId = $('Webhook').first().json.body.order_id;\nconst status = $('Webhook').first().json.body.status;\nconst user = $json;\n\nlet message = \"\";\n\nswitch (status) {\n  case \"pedido_recebido\":\n    message = `🧾 Pedido #${orderId} recebido com sucesso!\\nEstamos organizando tudo para você.`;\n    break;\n\n  case \"em_preparo\":\n    message = `👨‍🍳 Pedido #${orderId} está em preparo!\\nLogo logo sai quentinho 🍕`;\n    break;\n\n  case \"a_caminho\":\n    message = `🛵 Pedido #${orderId} saiu para entrega!\\nFique atento 😉`;\n    break;\n\n  case \"finalizado\":\n    message = `✅ Pedido #${orderId} foi finalizado!\\nObrigado por pedir com a gente 💚`;\n    break;\n\n  case \"cancelado\":\n    message = `❌ Pedido #${orderId} foi cancelado.\\nSe precisar, estamos aqui.`;\n    break;\n\n  default:\n    message = `📦 Pedido #${orderId} atualizado para: ${status}`;\n}\n\nreturn [\n  {\n    json: {\n      chat_id: user.telegram_chat_id,\n      text: message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -336,
+        -528
+      ],
+      "id": "28e846ed-0e74-4a89-8050-31a91689175c",
+      "name": "Status Message"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -528
+      ],
+      "id": "b6b9c8e0-6e1e-4e03-a1fe-6091b6a49bfc",
+      "name": "Send a text message",
+      "webhookId": "0c876d10-4f5e-48f0-bc75-8cfa47196f4f",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions\nSET data = data - 'optionsMap' - 'orderId'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.chatId  + ''}}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1504,
+        736
+      ],
+      "id": "57aec508-efe0-4f54-ab66-2c377c2abf5f",
+      "name": "Erase data1",
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "={{ $('Compose Context').item.json.user.chatId }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1712,
+        736
+      ],
+      "id": "c56722ca-2e7d-40f2-b58d-13d64aec5024",
+      "name": "Update State main_menu",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'get_order'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        1280,
+        -1360
+      ],
+      "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
+      "name": "Update State get_order",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const order = items[0].json;\n\nfunction formatStatus(status) {\n  const map = {\n    carrinho: \"🛒 No carrinho\",\n    pedido_recebido: \"📩 Pedido recebido\",\n    em_preparo: \"👨‍🍳 Em preparo\",\n    a_caminho: \"🚚 A caminho\",\n    finalizado: \"✅ Finalizado\",\n    cancelado: \"❌ Cancelado\"\n  };\n\n  return map[status] || status;\n}\n\nlet message = `🧾 Resumo do seu pedido #${order.order_number}\\n`;\nmessage += `📌 Status: ${formatStatus(order.status)}\\n\\n`;\n\nfor (const item of order.items) {\n  message += `• ${item.quantity}x ${item.name} - R$ ${item.total_price.toFixed(2)}\\n`;\n}\n\nmessage += `\\n💰 Total: R$ ${order.total_price.toFixed(2)}`;\n\nif (order.payment) {\n  message += `\\n💳 Pagamento: ${order.payment}`;\n}\n\nif (order.address) {\n  message += `\\n📍 Entrega: ${order.address}`;\n}\n\nif (order.observation) {\n  message += `\\n📝 Obs: ${order.observation}`;\n}\n\nreturn [\n  {\n    json: {\n      message\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1344,
+        -1824
+      ],
+      "id": "7d1ec307-2be1-48a0-9076-02381298a78b",
+      "name": "Order Summary Message1"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "={{$json.message}}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1568,
+        -1824
+      ],
+      "id": "662d5515-311d-407e-bf99-ee80980eddc6",
+      "name": "Send Order Summary1",
+      "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
+      "credentials": {
+        "telegramApi": {
+          "id": "DTCzBBOAY1sVtYZS",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        944,
+        -1728
+      ],
+      "id": "2ac636c5-ca3e-4757-8bcd-b37d9f86cba2",
+      "name": "Update State main_menu2",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "sLwbvvNQWvbX83i1",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "=http://backend:3000/orders/{{ $('Compose Context').item.json.input.text }}/summary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1152,
+        -1728
+      ],
+      "id": "6a45fd0b-71ce-49c5-a0fa-10bbb88e1247",
+      "name": "GET Order Summary1",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "=❌ Não foi possível encontrar um pedido com esse número.\nVerifique e tente novamente.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1344,
+        -1616
+      ],
+      "id": "3c12df9d-2f1a-422a-980b-fa1cd182ff0e",
+      "name": "GET Order Error",
+      "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
       "credentials": {
         "telegramApi": {
           "id": "DTCzBBOAY1sVtYZS",
@@ -1220,7 +1548,7 @@
       "main": [
         [
           {
-            "node": "Update State main_menu2",
+            "node": "Update State get_order",
             "type": "main",
             "index": 0
           }
@@ -1263,6 +1591,13 @@
       "main": [
         [
           {
+            "node": "Update State main_menu2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Main Menu Switch",
             "type": "main",
             "index": 0
@@ -1298,7 +1633,12 @@
         ],
         [
           {
-            "node": "Update State main_menu",
+            "node": "PATCH Order",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "menu",
             "type": "main",
             "index": 0
           }
@@ -1491,17 +1831,6 @@
         ]
       ]
     },
-    "Update State main_menu2": {
-      "main": [
-        [
-          {
-            "node": "acompanhar_pedido",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Update State awaiting_main_menu_option": {
       "main": [
         [
@@ -1553,7 +1882,7 @@
         ],
         [
           {
-            "node": "HTTP Request",
+            "node": "POST Item",
             "type": "main",
             "index": 0
           }
@@ -1615,12 +1944,18 @@
         ]
       ]
     },
-    "Update State main_menu": {
+    "Adicionado": {
       "main": [
-        []
+        [
+          {
+            "node": "Update State awaiting_order_menu_option",
+            "type": "main",
+            "index": 0
+          }
+        ]
       ]
     },
-    "HTTP Request": {
+    "POST Item": {
       "main": [
         [
           {
@@ -1631,11 +1966,150 @@
         ]
       ]
     },
-    "Adicionado": {
+    "PATCH Order": {
       "main": [
         [
           {
-            "node": "Update State awaiting_order_menu_option",
+            "node": "Sucess",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sucess": {
+      "main": [
+        [
+          {
+            "node": "GET Order Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Order Summary": {
+      "main": [
+        [
+          {
+            "node": "Order Summary Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Summary Message": {
+      "main": [
+        [
+          {
+            "node": "Send Order Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Order Summary": {
+      "main": [
+        [
+          {
+            "node": "Erase data1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "GET User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET User": {
+      "main": [
+        [
+          {
+            "node": "Status Message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Message": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Erase data1": {
+      "main": [
+        [
+          {
+            "node": "Update State main_menu",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State get_order": {
+      "main": [
+        [
+          {
+            "node": "acompanhar_pedido",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Order Summary Message1": {
+      "main": [
+        [
+          {
+            "node": "Send Order Summary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State main_menu2": {
+      "main": [
+        [
+          {
+            "node": "GET Order Summary1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GET Order Summary1": {
+      "main": [
+        [
+          {
+            "node": "Order Summary Message1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Order Error",
             "type": "main",
             "index": 0
           }
@@ -1649,7 +2123,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "9a5a0f3e-074d-43dd-b3ab-52e849b23866",
+  "versionId": "4151e741-127f-4eea-a673-c431e3db098e",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
