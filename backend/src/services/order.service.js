@@ -11,6 +11,8 @@ import {
     getProduct as getProductRepo
 } from "../repositories/product.repository.js";
 import { AppError } from "../utils/AppError.js";
+import axios from "axios";
+import { ORDER_STATUS_WEBHOOK_URL } from "../config/env.js";
 
 function formatOrder(order) {
     return {
@@ -114,9 +116,22 @@ export async function updateOrder(
         if (!order)
             throw new AppError("Pedido não encontrado", 404);
 
+        if (order.status !== "carrinho") {
+            const webhookUrl = ORDER_STATUS_WEBHOOK_URL;
+
+            if (webhookUrl) {
+                await axios.post(webhookUrl, {
+                    order_id: order.id,
+                    user_id: order.user_id,
+                    status: order.status
+                });
+            }
+        }
+
         return formatOrder(order);
 
     } catch (error) {
+        console.error("ERRO REAL:", error.response?.data || error.message || error);
 
         if (error.code === "22P02") {
             throw new AppError("Valor inválido para status ou pagamento", 400);
