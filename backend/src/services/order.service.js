@@ -21,6 +21,7 @@ function formatOrder(order) {
         payment: order.payment,
         change_for: order.change_for,
         observation: order.observation,
+        user_id: order.user_id,
         created_at: order.created_at,
         updated_at: order.updated_at
     }   
