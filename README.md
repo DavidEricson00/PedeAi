@@ -79,6 +79,9 @@ volumes:
 The backend runs on port `3000`, PostgreSQL on port `5432`, and n8n on port `5678`.
 
 ## 🤖 n8n Workflow Automation
+<div align="center">
+<img src="https://i.imgur.com/oRnQ0Fo.png">
+</div>
 
 The entire chatbot logic is handled by **n8n**, a visual workflow automation tool.
 
