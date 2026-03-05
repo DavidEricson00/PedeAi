@@ -284,30 +284,6 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ $json.user.state }}",
-                    "rightValue": "main_menu",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals"
-                    },
-                    "id": "afa53c6d-f8de-4e5e-bc5a-12a112b3a3f7"
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "main_menu"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
                     "id": "74fdafbd-e3cd-46cd-b2fe-b73412158aad",
                     "leftValue": "={{ $json.user.state }}",
                     "rightValue": "order_menu",
@@ -321,6 +297,30 @@
               },
               "renameOutput": true,
               "outputKey": "order_menu"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "main_menu",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "afa53c6d-f8de-4e5e-bc5a-12a112b3a3f7"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "main_menu"
             },
             {
               "conditions": {
@@ -568,6 +568,31 @@
                 },
                 "conditions": [
                   {
+                    "id": "d2c1c22c-344c-4528-8d56-0b9273812aae",
+                    "leftValue": "={{ $json.type }}",
+                    "rightValue": "invalid",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
                     "id": "2f3b2a79-611e-4fd0-a2cd-8b462b65f7f9",
                     "leftValue": "={{ $json.type }}",
                     "rightValue": "menu",
@@ -630,31 +655,6 @@
               },
               "renameOutput": true,
               "outputKey": "checkout"
-            },
-            {
-              "conditions": {
-                "options": {
-                  "caseSensitive": true,
-                  "leftValue": "",
-                  "typeValidation": "strict",
-                  "version": 3
-                },
-                "conditions": [
-                  {
-                    "id": "d2c1c22c-344c-4528-8d56-0b9273812aae",
-                    "leftValue": "={{ $json.type }}",
-                    "rightValue": "invalid",
-                    "operator": {
-                      "type": "string",
-                      "operation": "equals",
-                      "name": "filter.operator.equals"
-                    }
-                  }
-                ],
-                "combinator": "and"
-              },
-              "renameOutput": true,
-              "outputKey": "invalid"
             }
           ]
         },
@@ -663,7 +663,7 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        832,
+        816,
         -320
       ],
       "id": "1733060a-48c9-40f1-b430-d3334efca6e1",
@@ -1379,7 +1379,7 @@
       ],
       "id": "c56722ca-2e7d-40f2-b58d-13d64aec5024",
       "name": "Update State main_menu",
-      "alwaysOutputData": true,
+      "alwaysOutputData": false,
       "credentials": {
         "postgres": {
           "id": "sLwbvvNQWvbX83i1",
@@ -1605,14 +1605,14 @@
         ],
         [
           {
-            "node": "Update State awaiting_main_menu_option",
+            "node": "Update State awaiting_order_menu_option",
             "type": "main",
             "index": 0
           }
         ],
         [
           {
-            "node": "Update State awaiting_order_menu_option",
+            "node": "Update State awaiting_main_menu_option",
             "type": "main",
             "index": 0
           }
@@ -1634,11 +1634,6 @@
         [
           {
             "node": "PATCH Order",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "menu",
             "type": "main",
             "index": 0
           }
@@ -1737,6 +1732,13 @@
       "main": [
         [
           {
+            "node": "invalid",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
             "node": "Erase data",
             "type": "main",
             "index": 0
@@ -1752,13 +1754,6 @@
         [
           {
             "node": "Update State checkout",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "invalid",
             "type": "main",
             "index": 0
           }
@@ -2123,7 +2118,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "4151e741-127f-4eea-a673-c431e3db098e",
+  "versionId": "c842ec11-be0c-455d-8534-9b11b071bf03",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
