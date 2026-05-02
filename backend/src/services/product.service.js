@@ -131,8 +131,18 @@ export async function getProductsByCategory(categoryId, active) {
     if (active !== undefined && typeof active !== "boolean") {
         throw new AppError("Parâmetro 'active' deve ser boolean", 400);
     }
-    
-    const products = await getProductsByCategoryRepo(categoryId, active);
 
-    return products.map(formatProduct);
+    const cachedKey = `products:categoryId=${categoryId}:active${active}`
+
+    const cached = await redis.get(cachedKey)
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    const products = await getProductsByCategoryRepo(categoryId, active);
+    const formatted = products.map(formatProduct);
+
+    await redis.set(cachedKey, JSON.stringify(formatted), "EX", 300);
+
+    return formatted;
 }
