@@ -1,3 +1,4 @@
+import redis from "../config/redis.js";
 import { 
     createProduct as createProductRepo,
     deleteProduct as deleteProductRepo,
@@ -49,10 +50,20 @@ export async function getProducts(active) {
     if (active !== undefined && typeof active !== "boolean") {
         throw new AppError("Parâmetro 'active' deve ser boolean", 400);
     }
+
+    const cacheKey = `products:active=${active}`;
+
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
     
     const products = await getProductsRepo(active);
+    const formatted = products.map(formatProduct);
 
-    return products.map(formatProduct);
+    await redis.set(cacheKey, JSON.stringify(formatted), "EX", 300);
+
+    return formatted;
 }
 
 export async function updateProduct(id, { name, price, category_id }) {
