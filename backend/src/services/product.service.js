@@ -8,6 +8,25 @@ import {
 } from "../repositories/product.repository.js";
 import { AppError } from "../utils/AppError.js";
 
+async function invalidateProductCache() {
+    const stream = redis.scanStream({ match: "products:*", count: 100 });
+    const promises = [];
+
+    stream.on("data", (keys) => {
+        if (keys.length > 0) {
+            promises.push(redis.del(...keys));
+        }
+    });
+
+    return new Promise((resolve, reject) => {
+        stream.on("end", async () => {
+            await Promise.all(promises);
+            resolve();
+        });
+        stream.on("error", reject);
+    });
+}
+
 function formatProduct(product) {
     return {
         id: product.id,
@@ -36,10 +55,6 @@ export async function createProduct({ name, price, category_id }) {
             category_id
         });
 
-        await redis.del("products:active=true");
-        await redis.del("products:active=false");
-        await redis.del("products:active=undefined");
-
         return formatProduct(product);
     } catch (error) {
         if (error.code === "23503") {
@@ -48,6 +63,8 @@ export async function createProduct({ name, price, category_id }) {
 
         throw new AppError("Erro interno ao criar produto", 500);
     }
+
+    await invalidateProductCache();
 }
 
 export async function getProducts(active) {
@@ -59,7 +76,7 @@ export async function getProducts(active) {
 
     const cached = await redis.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached);
+        return JSON.parse(cached);
     }
     
     const products = await getProductsRepo(active);
@@ -87,9 +104,6 @@ export async function updateProduct(id, { name, price, category_id }) {
         if (!product)
             throw new AppError("Produto não encontrado", 404);
 
-        await redis.del("products:active=true");
-        await redis.del("products:active=undefined");
-
         return formatProduct(product);
     } catch (error) {
         if (error.code === "23503") {
@@ -97,6 +111,8 @@ export async function updateProduct(id, { name, price, category_id }) {
         }
         throw new AppError("Erro ao atualizar produto", 500);
     }
+
+    await invalidateProductCache();
 }
 
 export async function deleteProduct(id) {
@@ -119,9 +135,7 @@ export async function deleteProduct(id) {
         throw new AppError("Erro ao deletar produto", 500);
     }
 
-    await redis.del("products:active=true");
-    await redis.del("products:active=false");
-    await redis.del("products:active=undefined");
+    await invalidateProductCache();
 }
 
 export async function getProductsByCategory(categoryId, active) {
@@ -132,17 +146,17 @@ export async function getProductsByCategory(categoryId, active) {
         throw new AppError("Parâmetro 'active' deve ser boolean", 400);
     }
 
-    const cachedKey = `products:categoryId=${categoryId}:active${active}`
+    const cacheKey = `products:category=${categoryId}:active=${active}`;
 
-    const cached = await redis.get(cachedKey)
+    const cached = await redis.get(cacheKey);
     if (cached) {
-      return JSON.parse(cached);
+        return JSON.parse(cached);
     }
 
     const products = await getProductsByCategoryRepo(categoryId, active);
     const formatted = products.map(formatProduct);
 
-    await redis.set(cachedKey, JSON.stringify(formatted), "EX", 300);
+    await redis.set(cacheKey, JSON.stringify(formatted), "EX", 300);
 
     return formatted;
 }
