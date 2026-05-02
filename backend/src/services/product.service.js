@@ -36,6 +36,10 @@ export async function createProduct({ name, price, category_id }) {
             category_id
         });
 
+        await redis.del("products:active=true");
+        await redis.del("products:active=false");
+        await redis.del("products:active=undefined");
+
         return formatProduct(product);
     } catch (error) {
         if (error.code === "23503") {
@@ -83,6 +87,9 @@ export async function updateProduct(id, { name, price, category_id }) {
         if (!product)
             throw new AppError("Produto não encontrado", 404);
 
+        await redis.del("products:active=true");
+        await redis.del("products:active=undefined");
+
         return formatProduct(product);
     } catch (error) {
         if (error.code === "23503") {
@@ -103,6 +110,7 @@ export async function deleteProduct(id) {
             throw new AppError("Produto não encontrado", 404);
 
     } catch (error) {
+        if (error instanceof AppError) throw error;
 
         if (error.code === "23503") {
             throw new AppError("Produto está vinculado a um pedido", 409);
@@ -110,6 +118,10 @@ export async function deleteProduct(id) {
 
         throw new AppError("Erro ao deletar produto", 500);
     }
+
+    await redis.del("products:active=true");
+    await redis.del("products:active=false");
+    await redis.del("products:active=undefined");
 }
 
 export async function getProductsByCategory(categoryId, active) {
