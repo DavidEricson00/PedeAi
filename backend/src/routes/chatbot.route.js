@@ -16,9 +16,18 @@ const router = Router();
  *           schema:
  *             type: object
  *             properties:
- *               message:
+*               userMessage:
+*                 type: string
+*                 example: "Quais são os lanches disponíveis?"
+*               telegramUserId:
+*                 type: integer
+*                 example: 123456789
+ *               establishmentSlug:
  *                 type: string
- *                 example: "Quais são os lanches disponíveis?"
+ *                 example: "pede-ai"
+ *               establishmentName:
+ *                 type: string
+ *                 example: "Pede Ai"
  *     responses:
  *       200:
  *         description: Resposta do chatbot
