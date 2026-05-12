@@ -22,6 +22,7 @@ The project follows a layered architecture:
 - Global error handling via `AppError`
 - PostgreSQL connection pool via `pg`
 - n8n handles all chatbot logic, connecting to the backend via HTTP
+- Product listing routes are cached with Redis, using scanStream-based invalidation on mutations
 
 ## 🐳 Infrastructure with Docker
 
@@ -50,6 +51,7 @@ services:
       - "3000:3000"
     depends_on:
       - postgres
+      - redis
     environment:
       DATABASE_URL: ${DATABASE_URL}
 
@@ -76,7 +78,7 @@ volumes:
   n8n_data:
 </pre>
 
-The backend runs on port `3000`, PostgreSQL on port `5432`, and n8n on port `5678`.
+The backend runs on port `3000`, PostgreSQL on port `5432`, n8n on port `5678` and Redis on port `6379`.
 
 ## 🤖 n8n Workflow Automation
 <div align="center">
@@ -201,6 +203,7 @@ PedeAi was built to:
 - Manage **containerized infrastructure** with Docker Compose
 - Work with **PostgreSQL** including triggers, enums, JSONB, and indexing
 - Build a practical, end-to-end food ordering system
+- Implement Redis caching with stream-based cache invalidation using ioredis
 
 ## 📌 Notes
 
