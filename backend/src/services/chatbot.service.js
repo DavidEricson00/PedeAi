@@ -39,7 +39,7 @@ async function buildMenuContext(establishmentSlug) {
   const cached = await redis.get(cacheKey);
   if (cached) return cached;
 
-  const products = await getAllProductsForContext(establishmentSlug);
+  const products = await getAllProductsForContext();
 
   let menuText = "CARDÁPIO DISPONÍVEL:\n\n";
   let currentCategory = null;
