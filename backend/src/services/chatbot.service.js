@@ -175,10 +175,35 @@ export async function chatWithBot(
 
   try {
     const result = await chat.sendMessage(sanitized);
-    text = result.response.text();
+
+    if (!result.response) {
+      throw new Error("Resposta vazia do Gemini");
+    }
+
+    const candidates = result.response.candidates;
+
+    if (!candidates || candidates.length === 0) {
+      text =
+        "Desculpe, posso ajudar apenas com dúvidas relacionadas ao cardápio e funcionamento do restaurante.";
+    } else {
+      text = result.response.text();
+    }
   } catch (error) {
-    console.error("Erro ao chamar Gemini:", error);
-    throw new AppError("Erro ao processar sua mensagem. Tente novamente.", 500);
+    console.error("ERRO COMPLETO GEMINI:");
+
+    console.error(error);
+
+    if (error.response) {
+      console.error("STATUS:", error.response.status);
+      console.error("DATA:", error.response.data);
+    }
+
+    throw new AppError(
+      error.response?.data?.error?.message ||
+        error.message ||
+        "Erro ao processar sua mensagem.",
+      error.response?.status || 500
+    );
   }
 
   await saveHistory(telegramUserId, [
