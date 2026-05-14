@@ -2,7 +2,7 @@
 
 PedeAi is a food ordering automation platform built to explore workflow automation with **n8n** and containerized infrastructure with **Docker**.
 
-The server is built using **Node.js + Express**, communicates with a **PostgreSQL** database, and integrates with **n8n** for intelligent chatbot automation.
+The server is built using **Node.js + Express**, communicates with a **PostgreSQL** database, integrates with **n8n** for intelligent chatbot automation, and includes a **Gemini AI-powered chatbot** for natural language assistance.
 
 ## 🚀 Technologies
 
@@ -13,6 +13,8 @@ The server is built using **Node.js + Express**, communicates with a **PostgreSQ
 - Swagger UI (API docs)
 - ngrok (tunnel for Telegram webhook)
 - Telegram Bot API (via BotFather)
+- Redis (caching with ioredis)
+- Google Gemini AI (`gemini-2.5-flash`)
 
 ## 🏗 Architecture
 
@@ -23,6 +25,7 @@ The project follows a layered architecture:
 - PostgreSQL connection pool via `pg`
 - n8n handles all chatbot logic, connecting to the backend via HTTP
 - Product listing routes are cached with Redis, using scanStream-based invalidation on mutations
+- Gemini AI chatbot exposes a `/bot` REST endpoint for natural language menu queries
 
 ## 🐳 Infrastructure with Docker
 
@@ -94,6 +97,7 @@ The entire chatbot logic is handled by n8n a visual workflow automation tool.
 3. n8n extracts the input, queries the **PostgreSQL session table**, and routes the user through a state machine
 4. Depending on the user's current state, n8n calls the backend REST API to read/write data
 5. n8n sends responses back to the user via Telegram
+6. For free-form questions (e.g. about the menu), n8n performs an **agent handoff** to the Gemini AI chatbot via the `/bot` endpoint
 
 ### Main Workflow States
 
@@ -106,6 +110,7 @@ The entire chatbot logic is handled by n8n a visual workflow automation tool.
 | `awaiting_product_menu_option` | Waiting for product selection |
 | `checkout` | User is providing delivery address |
 | `get_order` | User is querying an existing order |
+| `agent` | User interacting with gemini agent |
 
 ### Workflow Features
 
@@ -114,6 +119,7 @@ The entire chatbot logic is handled by n8n a visual workflow automation tool.
 - **Options map** stored in session to resolve numbered inputs
 - **Order creation and item management** via REST API calls
 - **Order status notifications** via n8n webhook → Telegram message
+- **Agent handoff flow** — unrecognized or free-form messages are forwarded to the Gemini AI chatbot
 
 ### Order Status Webhook
 
@@ -126,6 +132,25 @@ The backend triggers a webhook to n8n when an order status changes. n8n then sen
 | `a_caminho` | 🛵 On the way |
 | `finalizado` | ✅ Completed |
 | `cancelado` | ❌ Cancelled |
+
+## 🧠 Gemini AI Chatbot
+
+PedeAi includes a Gemini-powered assistant accessible via the `/bot` REST endpoint. It handles natural language questions about the menu directly, acting as a fallback when the n8n state machine doesn't match a known command.
+
+### Features
+
+- Powered by **Google Gemini** (`gemini-2.5-flash`)
+- **Conversation history** stored in Redis (TTL: 10 minutes, last 6 turns)
+- **Menu context** cached in Redis (TTL: 5 minutes) and built dynamically from the database
+- **Rate limiting** — maximum 8 messages per user per minute
+- **Input sanitization** — validates message length and blocks prompt injection attempts
+- **Strict system prompt** — the bot only answers questions related to the menu and restaurant; off-topic, offensive, or injection attempts are refused
+- **Empty/blocked response handling** — gracefully falls back to a safe message when Gemini returns no candidates
+- **Cache invalidation** — menu cache is cleared automatically when products are updated
+
+### Agent Handoff
+
+When the n8n workflow receives a message it cannot match to a known state, it forwards it to the Gemini chatbot via a POST to `/bot`. The AI response is then sent back to the user through Telegram.
 
 ## 🗄 Database Schema
 
@@ -178,6 +203,10 @@ Set the `WEBHOOK_URL` environment variable to your ngrok public URL so n8n can c
 
 **5.** Configure your Telegram bot credentials in n8n and activate the workflow
 
+**6.** (Optional) Run the database seed script to populate sample data:
+
+<code>npm run seed</code>
+
 ## ⚙️ Environment Variables
 
 <pre>
@@ -186,12 +215,20 @@ POSTGRES_PASSWORD=
 POSTGRES_DB=
 DATABASE_URL=postgresql://user:password@postgres:5432/dbname
 
+PORT=
+
 N8N_BASIC_AUTH_USER=
 N8N_BASIC_AUTH_PASSWORD=
 N8N_HOST=localhost
 N8N_PORT=5678
 N8N_PROTOCOL=http
 WEBHOOK_URL=https://your-ngrok-url.ngrok.io
+ORDER_STATUS_WEBHOOK_URL=
+
+REDIS_HOST=
+REDIS_PORT=
+
+GEMINI_API_KEY=
 </pre>
 
 ## 🎯 Purpose of the Project
@@ -204,6 +241,8 @@ PedeAi was built to:
 - Work with **PostgreSQL** including triggers, enums, JSONB, and indexing
 - Build a practical, end-to-end food ordering system
 - Implement Redis caching with stream-based cache invalidation using ioredis
+- Explore **Gemini AI** integration for natural language menu assistance
+- Practice **agent handoff** patterns between a rule-based state machine and an LLM
 
 ## 📌 Notes
 
@@ -211,3 +250,4 @@ PedeAi was built to:
 - n8n communicates with the backend via the internal Docker network using `http://backend:3000`
 - The database schema is auto-applied on first container startup via `./database/init.sql`
 - Swagger docs available at `<backend-address>/docs`
+- The Gemini chatbot is scoped strictly to menu-related queries and refuses off-topic or adversarial input
