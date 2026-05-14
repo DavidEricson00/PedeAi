@@ -8,10 +8,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1280,
-        -192
+        -64,
+        1632
       ],
-      "id": "4ccf96c6-cd77-4cca-8d6f-55505b3e37fa",
+      "id": "0897ceb6-e207-421b-b6c4-d73887d885e3",
       "name": "Render Products Menu"
     },
     {
@@ -22,10 +22,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        2176,
-        -672
+        832,
+        1152
       ],
-      "id": "336aeefa-e1b3-4127-8d6e-e5ebb20e34ea",
+      "id": "6c5901ab-9ae6-4e85-a857-e10010416258",
       "name": "Get Categories"
     },
     {
@@ -40,15 +40,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1728,
-        -1024
+        384,
+        800
       ],
-      "id": "e2c7d83c-f42c-4c0e-a51d-beb830728ab2",
+      "id": "6afab21e-69ac-4c5b-bb6d-34abd733f474",
       "name": "Erro",
       "webhookId": "13325990-e870-47ae-9f7a-feb3d9575fd6",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -56,7 +56,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "💬 Estamos te encaminhando para um atendente.\n\nPor favor, aguarde um momento 😊",
+        "text": "💬 Nosso agente está pronto para responder sua dúvida 😊\n\nPode enviar sua mensagem!",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -65,15 +65,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1504,
-        -1168
+        160,
+        656
       ],
-      "id": "8037b9db-4853-4dce-8a73-98656638398d",
+      "id": "dc375006-8d19-49c5-8b79-3f4091771ced",
       "name": "falar_atendente",
       "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -90,15 +90,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1504,
-        -1360
+        160,
+        464
       ],
-      "id": "5b71a6a6-6b58-428a-85d1-77e76b8554e6",
+      "id": "9c02aaff-170b-4036-ad49-cc911a93e020",
       "name": "acompanhar_pedido",
       "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -190,16 +190,16 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1056,
-        -1136
+        -288,
+        688
       ],
-      "id": "cf3f016c-2fe6-4290-ad0a-890a5be4f0fb",
+      "id": "9526f68b-ac2a-49d4-a43c-2eef86ae8362",
       "name": "Main Menu Switch"
     },
     {
       "parameters": {
         "chatId": "={{ $('Compose Context').item.json.user.chatId }}",
-        "text": "👋 Olá! Como podemos te ajudar?\n\n[ 1 ] - Fazer um novo pedido  \n[ 2 ] - Acompanhar meu pedido  \n[ 3 ] - Falar com um atendente\n\nResponda com o número da opção.",
+        "text": "👋 Olá! Como podemos te ajudar?\n\n[ 1 ] - Fazer um novo pedido  \n[ 2 ] - Acompanhar meu pedido  \n[ 3 ] - Tirar dúvidas com nosso agente virtual\n\nResponda com o número da opção.",
         "additionalFields": {
           "appendAttribution": false,
           "parse_mode": "HTML"
@@ -208,15 +208,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2176,
-        -864
+        832,
+        960
       ],
-      "id": "8864d765-40ca-4467-a66a-eef677507c45",
+      "id": "1dad3bd8-fca3-4479-a36e-4bbb3a452c1f",
       "name": "main_menu",
       "webhookId": "e1032131-27b0-42aa-8b2f-48df3b26db43",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -225,6 +225,31 @@
       "parameters": {
         "rules": {
           "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1db1a41c-2a42-4b2d-b7a0-2c3bcd53331e",
+                    "leftValue": "={{ $json.user.state }}",
+                    "rightValue": "agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "agent"
+            },
             {
               "conditions": {
                 "options": {
@@ -402,10 +427,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        160,
-        -352
+        -1184,
+        1472
       ],
-      "id": "71439b89-8e9a-409b-85d1-c2d42a0efe52",
+      "id": "0c85359c-095c-4ade-bc1a-fb1045be2de2",
       "name": "Switch"
     },
     {
@@ -419,14 +444,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        -288,
-        -288
+        -1632,
+        1536
       ],
-      "id": "5af15a3e-2dc6-4017-9b9d-76d474f087d8",
+      "id": "9819d301-8a6e-4c9b-bacc-e6060b08d973",
       "name": "Search Session",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -438,10 +463,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -64,
-        -288
+        -1408,
+        1536
       ],
-      "id": "36fc62b6-05e0-45ee-bba6-d9b053b8d8f2",
+      "id": "bc43f9cc-f6df-4649-b2c9-d2d6add06591",
       "name": "Compose Context"
     },
     {
@@ -451,10 +476,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -512,
-        -288
+        -1856,
+        1536
       ],
-      "id": "cfc8f7f5-0851-4b97-9212-f4d57e474c10",
+      "id": "19e46798-e046-40c8-acf2-95d0a24504ef",
       "name": "Extract Input"
     },
     {
@@ -467,15 +492,15 @@
       "type": "n8n-nodes-base.telegramTrigger",
       "typeVersion": 1.2,
       "position": [
-        -736,
-        -288
+        -2080,
+        1536
       ],
-      "id": "ce5aadf9-d7d5-4523-bfb4-b3c72ff52972",
+      "id": "965fd003-7288-4f56-9611-fb5d1a0edfe0",
       "name": "Telegram Trigger",
       "webhookId": "e76d2656-c2f5-4d2d-bf50-251a9aeb2d3b",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -487,10 +512,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        2400,
-        -672
+        1056,
+        1152
       ],
-      "id": "75768172-35e9-4bf3-8f31-2452e7008c0e",
+      "id": "9ddb36d3-8177-446e-95c5-f6305d8992ca",
       "name": "Render Order Menu"
     },
     {
@@ -505,15 +530,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2848,
-        -672
+        1504,
+        1152
       ],
-      "id": "5fe7aad2-847e-4ece-a179-d606e4c8c439",
+      "id": "dbcd27a5-8ceb-4d69-8159-d1a9b76571bd",
       "name": "Order Menu",
       "webhookId": "5d6deb93-6fc8-408b-a32c-02072c4f0fd7",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -529,14 +554,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        2624,
-        -672
+        1280,
+        1152
       ],
-      "id": "c64c139a-1d6b-4f98-93b6-99746d185def",
+      "id": "c1d26670-dafe-4977-98ac-9ba56314aa3d",
       "name": "Save Options Map",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -548,10 +573,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        608,
-        -288
+        -736,
+        1536
       ],
-      "id": "831a646f-b8e6-4308-9549-40013dc66438",
+      "id": "7585a549-3a51-4652-9bac-5c72a3df747b",
       "name": "Resolve Order Menu Option"
     },
     {
@@ -663,10 +688,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        816,
-        -320
+        -528,
+        1504
       ],
-      "id": "1733060a-48c9-40f1-b430-d3334efca6e1",
+      "id": "b4930e45-6ac7-4f67-86fd-587e5b9087ba",
       "name": "Order Menu Switch"
     },
     {
@@ -681,15 +706,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1728,
-        -368
+        384,
+        1456
       ],
-      "id": "159aa956-b8c5-4854-bafb-0002393c772b",
+      "id": "07e334b2-175f-4a4a-a481-efe8bf1096fe",
       "name": "menu",
       "webhookId": "dc5d1936-2548-4f2c-a46d-b7f45a767694",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -702,10 +727,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1056,
-        -192
+        -288,
+        1632
       ],
-      "id": "41f13c6a-b0a8-452e-8968-38ec906c243d",
+      "id": "ed9862e7-baa1-4364-9419-787554f30eab",
       "name": "Get Products by Category"
     },
     {
@@ -719,14 +744,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1504,
-        -384
+        160,
+        1440
       ],
-      "id": "7530c4e2-b7a6-459a-83cf-5f7c39684e1b",
+      "id": "e46043a8-5853-4a23-a43f-21b9773316d0",
       "name": "Erase data",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -743,15 +768,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1728,
-        -176
+        384,
+        1648
       ],
-      "id": "1412bc91-775f-4264-8128-f92f59c4db34",
+      "id": "2f2f2c23-63c8-4231-98ef-d129b05884d2",
       "name": "Products Menu",
       "webhookId": "13d269fa-c2d3-4a14-a103-07ce0ab657d3",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -767,15 +792,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1504,
-        -192
+        160,
+        1632
       ],
-      "id": "e44d6e5b-e46a-4670-82ff-b3b613d1245d",
+      "id": "a8bd4da4-7ecf-4dd6-bd05-7f742a70e3d6",
       "name": "Save Products Map",
       "alwaysOutputData": false,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -791,39 +816,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1280,
-        -832
+        -64,
+        992
       ],
-      "id": "277411c9-84b0-4e14-8456-6b6201c432ae",
+      "id": "796a666b-5397-4b27-ac71-f1c107822576",
       "name": "Update State awaiting_order_menu_option",
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
-          "name": "Postgres account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "operation": "executeQuery",
-        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
-        "options": {
-          "queryReplacement": "=={{ $json.chatId + '' }}"
-        }
-      },
-      "type": "n8n-nodes-base.postgres",
-      "typeVersion": 2.6,
-      "position": [
-        1280,
-        -1168
-      ],
-      "id": "f58d64dc-fee8-42f9-96f6-d04436590962",
-      "name": "Update State main_menu1",
-      "alwaysOutputData": true,
-      "credentials": {
-        "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -839,15 +840,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1952,
-        -864
+        608,
+        960
       ],
-      "id": "289cad03-f79a-44f0-8cfa-10e72e83eda1",
+      "id": "e2c8f75d-cca6-4aa0-a3bc-6a6997bd4588",
       "name": "Update State awaiting_main_menu_option",
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -859,10 +860,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        384,
-        352
+        -960,
+        2176
       ],
-      "id": "075efca2-0cf8-4d89-8600-083598696b47",
+      "id": "b9e0c174-9b48-4ea2-8b5d-347a47f54926",
       "name": "Resolve Product Menu Option"
     },
     {
@@ -876,14 +877,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1056,
-        0
+        -288,
+        1824
       ],
-      "id": "677886c2-aa5d-4758-83f5-ec33c8e3ebec",
+      "id": "fbc4c7f8-7077-4911-ad54-64153a96039c",
       "name": "Update State checkout",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -900,15 +901,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1280,
-        0
+        -64,
+        1824
       ],
-      "id": "75ff2c44-d2ae-47d1-97ee-f61654de1416",
+      "id": "bcbd5124-a4ed-4c0a-9782-d49e99240132",
       "name": "Endereço de Entrega",
       "webhookId": "20052272-9007-4b65-b3ad-971687d2d3da",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -954,7 +955,7 @@
                   {
                     "id": "26542482-bb37-4dc9-9f16-c132c3d4ac97",
                     "leftValue": "={{ $json.type }}",
-                    "rightValue": "back",
+                    "rightValue": "back_to_order_menu",
                     "operator": {
                       "type": "string",
                       "operation": "equals"
@@ -997,10 +998,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        608,
-        336
+        -736,
+        2160
       ],
-      "id": "9cd68022-c975-47bc-b909-ad5e0bc34c75",
+      "id": "0633f245-587b-4e58-b84e-650d41e87d46",
       "name": "Product Menu Switch"
     },
     {
@@ -1011,10 +1012,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1504,
-        -832
+        160,
+        992
       ],
-      "id": "87ca8649-6fbe-4852-86ac-7775f0484652",
+      "id": "f6e293bc-a3f5-4520-bf30-e7fd3d67eca3",
       "name": "Get User"
     },
     {
@@ -1035,10 +1036,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1728,
-        -832
+        384,
+        992
       ],
-      "id": "c0a40b87-1413-43ab-a2a1-7396ad771f12",
+      "id": "da6a408d-c1ef-4f80-9e73-42a78eb37ea5",
       "name": "POST Order"
     },
     {
@@ -1052,14 +1053,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1952,
-        -672
+        608,
+        1152
       ],
-      "id": "07b838e1-7d2b-4d5c-90da-4cbb276e41c2",
+      "id": "bcc257e2-1f78-4b0a-b45d-0da4f25de768",
       "name": "Save ChatId",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -1076,15 +1077,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        -528
+        -288,
+        1296
       ],
-      "id": "b46cf344-4243-408e-adc4-c66f18c01045",
+      "id": "476f7eb7-c867-4626-8f87-782f26010a9a",
       "name": "invalid",
       "webhookId": "6542bcaf-a5c5-4fc6-97f1-bb77ce31c224",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1101,15 +1102,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        352
+        -288,
+        2176
       ],
-      "id": "e40c53c4-103c-479b-9271-be1ac3498fcd",
+      "id": "73385399-db97-4e80-9899-1e0b90e032e5",
       "name": "back",
       "webhookId": "a0ce8934-b5b8-4a05-bfe1-2e9aac712e37",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1126,15 +1127,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1056,
-        544
+        -288,
+        2368
       ],
-      "id": "2bf78e40-728f-4cec-bfd1-3b232842bb29",
+      "id": "704f2b21-45a3-45c5-be07-8ee3d12f984a",
       "name": "Adicionado",
       "webhookId": "ae2f245c-acba-4201-af1b-1fd3ad25a075",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1161,10 +1162,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        832,
-        544
+        -512,
+        2368
       ],
-      "id": "b894cb9a-73a1-43a7-818e-9a317818ce07",
+      "id": "e31e2e5e-c211-4e60-bbfb-f885127b7f15",
       "name": "POST Item"
     },
     {
@@ -1189,10 +1190,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        384,
-        736
+        -960,
+        2560
       ],
-      "id": "1904bedb-c48a-4668-bd06-2f5e301a6679",
+      "id": "3c18a259-b8da-4985-930c-0f274600d45c",
       "name": "PATCH Order"
     },
     {
@@ -1207,15 +1208,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        608,
-        736
+        -736,
+        2560
       ],
-      "id": "d651da27-c95f-4e5b-b7cb-7fc8ae924e82",
+      "id": "00c67e34-57f7-47d3-9df2-285c36e1bf27",
       "name": "Sucess",
       "webhookId": "a81f153d-41f8-4f24-909c-1333b7563437",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1228,10 +1229,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        832,
-        736
+        -512,
+        2560
       ],
-      "id": "ef36d734-2a46-4fe2-88fb-52a2096fe0f5",
+      "id": "09ec827a-d800-4082-b1de-15fdd5eb9524",
       "name": "GET Order Summary"
     },
     {
@@ -1241,10 +1242,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1056,
-        736
+        -288,
+        2560
       ],
-      "id": "66fb46ea-6ebc-4eec-a0e8-77a02bccbb64",
+      "id": "48faee12-4e59-4a2c-b27b-edd93d5cd2e4",
       "name": "Order Summary Message"
     },
     {
@@ -1259,15 +1260,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1280,
-        736
+        -64,
+        2560
       ],
-      "id": "4f5621a4-bca1-4d46-ae10-7d738f3a9884",
+      "id": "bda0d5bc-4758-485e-8539-83fecf531a5b",
       "name": "Send Order Summary",
       "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1281,10 +1282,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -752,
-        -528
+        -2048,
+        1296
       ],
-      "id": "c08708a4-acfa-4580-b7c2-39b2b5ca5eb4",
+      "id": "5ed2bdbc-80eb-40bb-9a23-e99964c8a7d6",
       "name": "Webhook",
       "webhookId": "9d28957f-eaed-4cdf-9f3e-c0b56c6f89df"
     },
@@ -1296,10 +1297,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        -544,
-        -528
+        -1840,
+        1296
       ],
-      "id": "66f0356c-87df-4826-9c99-f93629ddba14",
+      "id": "bac8260f-fc40-46e5-a2ef-bdbbc7be0e85",
       "name": "GET User"
     },
     {
@@ -1309,10 +1310,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -336,
-        -528
+        -1632,
+        1296
       ],
-      "id": "28e846ed-0e74-4a89-8050-31a91689175c",
+      "id": "985dbbb5-ffa3-4d8b-b9b4-66cb1c5a0372",
       "name": "Status Message"
     },
     {
@@ -1327,15 +1328,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -128,
-        -528
+        -1424,
+        1296
       ],
-      "id": "b6b9c8e0-6e1e-4e03-a1fe-6091b6a49bfc",
+      "id": "efa00973-b199-4120-87aa-144b4771aa68",
       "name": "Send a text message",
       "webhookId": "0c876d10-4f5e-48f0-bc75-8cfa47196f4f",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1351,14 +1352,14 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1504,
-        736
+        160,
+        2560
       ],
-      "id": "57aec508-efe0-4f54-ab66-2c377c2abf5f",
+      "id": "9c4f6e69-678c-42bc-a00a-06f4e78e050d",
       "name": "Erase data1",
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -1374,15 +1375,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1712,
-        736
+        368,
+        2560
       ],
-      "id": "c56722ca-2e7d-40f2-b58d-13d64aec5024",
+      "id": "ea89fd91-845f-4658-a595-1ff0c1fdc1c8",
       "name": "Update State main_menu",
       "alwaysOutputData": false,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -1398,15 +1399,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        1280,
-        -1360
+        -64,
+        464
       ],
-      "id": "444ef797-79b7-4dc9-935e-4246d21caa49",
+      "id": "4f1bb577-c678-4c4f-8066-836820e1581b",
       "name": "Update State get_order",
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -1418,10 +1419,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        1344,
-        -1824
+        0,
+        0
       ],
-      "id": "7d1ec307-2be1-48a0-9076-02381298a78b",
+      "id": "6c252e22-ada1-4ba1-8fe2-cb538ecc5fad",
       "name": "Order Summary Message1"
     },
     {
@@ -1436,15 +1437,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1568,
-        -1824
+        224,
+        0
       ],
-      "id": "662d5515-311d-407e-bf99-ee80980eddc6",
+      "id": "19288583-587a-4c9a-9674-7ea85be6ab18",
       "name": "Send Order Summary1",
       "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
@@ -1460,15 +1461,15 @@
       "type": "n8n-nodes-base.postgres",
       "typeVersion": 2.6,
       "position": [
-        944,
-        -1728
+        -400,
+        96
       ],
-      "id": "2ac636c5-ca3e-4757-8bcd-b37d9f86cba2",
+      "id": "52d1e38c-34e4-49d3-aae7-a3e5b10ba854",
       "name": "Update State main_menu2",
       "alwaysOutputData": true,
       "credentials": {
         "postgres": {
-          "id": "sLwbvvNQWvbX83i1",
+          "id": "WvUoNCudNHCmuNGD",
           "name": "Postgres account"
         }
       }
@@ -1481,10 +1482,10 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        1152,
-        -1728
+        -192,
+        96
       ],
-      "id": "6a45fd0b-71ce-49c5-a0fa-10bbb88e1247",
+      "id": "f1204469-0a3a-4ded-95cc-1619bedb5498",
       "name": "GET Order Summary1",
       "alwaysOutputData": false,
       "onError": "continueErrorOutput"
@@ -1501,38 +1502,158 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        1344,
-        -1616
+        0,
+        208
       ],
-      "id": "3c12df9d-2f1a-422a-980b-fa1cd182ff0e",
+      "id": "df1edde9-961a-44df-812f-0d63aeb8703d",
       "name": "GET Order Error",
       "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
       "credentials": {
         "telegramApi": {
-          "id": "DTCzBBOAY1sVtYZS",
+          "id": "6zIR8KcWfQWoutU2",
           "name": "Telegram account"
         }
       }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'agent'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -64,
+        656
+      ],
+      "id": "2c052962-7878-4163-afdc-b8eb2d2322c8",
+      "name": "Update State agent",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "WvUoNCudNHCmuNGD",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE user_sessions \nSET state = 'main_menu'\nWHERE chat_id = $1;",
+        "options": {
+          "queryReplacement": "=={{ $json.chatId + '' }}"
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -416,
+        -352
+      ],
+      "id": "0ea7df85-6008-4e7c-91f5-f293ddb8aed6",
+      "name": "Update State main_menu3",
+      "alwaysOutputData": true,
+      "credentials": {
+        "postgres": {
+          "id": "WvUoNCudNHCmuNGD",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Compose Context').item.json.chatId }}",
+        "text": "=❌ Não foi possível se comunicar com o agente.\nTente novamente mais tarde.",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -224
+      ],
+      "id": "30de4343-d5e1-4d4c-803f-1a53c34aebd6",
+      "name": "GET Agent Error",
+      "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
+      "credentials": {
+        "telegramApi": {
+          "id": "6zIR8KcWfQWoutU2",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Switch').item.json.user.chatId }}",
+        "text": "={{ $json.message }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        -448
+      ],
+      "id": "ebd9181d-4757-4bcc-a89c-40e7055efbca",
+      "name": "Send Agent Message",
+      "webhookId": "d9ef934e-8c52-456d-8b34-dc50ec906477",
+      "credentials": {
+        "telegramApi": {
+          "id": "6zIR8KcWfQWoutU2",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=http://backend:3000/bot",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "message",
+              "value": "={{ $('Compose Context').item.json.input.text }}"
+            },
+            {
+              "name": "telegramUserId",
+              "value": "={{ $('Switch').item.json.user.chatId }}"
+            },
+            {
+              "name": "establishmentSlug",
+              "value": "ponto-do-brotinho"
+            },
+            {
+              "name": "establishmentName",
+              "value": "Ponto do Brotinho"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -224,
+        -352
+      ],
+      "id": "0bfdd137-a27a-402b-b6ff-933009020828",
+      "name": "Post Agent Response",
+      "alwaysOutputData": false,
+      "onError": "continueErrorOutput"
     }
   ],
   "pinData": {},
   "connections": {
-    "Save Main Menu State1": {
-      "main": [
-        [
-          {
-            "node": "Send Main Menu1",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Build Main Menu",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "Render Products Menu": {
       "main": [
         [
@@ -1555,7 +1676,7 @@
         ],
         [
           {
-            "node": "Update State main_menu1",
+            "node": "Update State agent",
             "type": "main",
             "index": 0
           }
@@ -1589,6 +1710,13 @@
     },
     "Switch": {
       "main": [
+        [
+          {
+            "node": "Update State main_menu3",
+            "type": "main",
+            "index": 0
+          }
+        ],
         [
           {
             "node": "Update State main_menu2",
@@ -1809,17 +1937,6 @@
         [
           {
             "node": "Get User",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Update State main_menu1": {
-      "main": [
-        [
-          {
-            "node": "falar_atendente",
             "type": "main",
             "index": 0
           }
@@ -2110,19 +2227,58 @@
           }
         ]
       ]
+    },
+    "Update State agent": {
+      "main": [
+        [
+          {
+            "node": "falar_atendente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update State main_menu3": {
+      "main": [
+        [
+          {
+            "node": "Post Agent Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Agent Response": {
+      "main": [
+        [
+          {
+            "node": "Send Agent Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GET Agent Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "c842ec11-be0c-455d-8534-9b11b071bf03",
+  "versionId": "026cce29-b539-4a68-b17c-309fcd4b1fdb",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "ef874e24560437ba490c0f3d600f073cc04dd4ebbe4818a63acd0a4df41c9a87"
+    "instanceId": "e4bc813024f863c017197a8ba147550f535ee05c47009b96e13ded1493fb29d2"
   },
-  "id": "ciEqBBemoolgt2Mg",
+  "id": "9TLUl5keJjF8cser",
   "tags": []
 }
