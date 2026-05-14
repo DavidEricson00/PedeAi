@@ -16,7 +16,7 @@ const router = Router();
  *           schema:
  *             type: object
  *             properties:
-*               userMessage:
+*               message:
 *                 type: string
 *                 example: "Quais são os lanches disponíveis?"
 *               telegramUserId:
